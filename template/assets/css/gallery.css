@@ -1,0 +1,291 @@
+/* ================================================================
+           GALLERY PAGE — SCOPED STYLES
+           Namespaced .gallery-* and #glb-* — zero bleed into main.css
+        ================================================================ */
+
+/* ── Section wrapper ─────────────────────────────────────────── */
+.gallery-section {
+    padding-top: 80px;
+    padding-bottom: 100px;
+    background-color: var(--color-light-1, #f8f5f0);
+}
+
+/* ── Masonry grid (CSS columns) ──────────────────────────────── */
+/*
+         * Pure CSS masonry — images keep their natural aspect ratios,
+         * columns fill top-to-bottom. No JS layout library needed.
+         *
+         * ScrollMagic integration surface (ready, not wired up):
+         *   data-gallery-section="scene"       → ScrollMagic scene anchor
+         *   data-gallery-masonry="container"   → append target for new batches
+         *   data-gallery-item                  → per-item selector / entrance hook
+         *
+         * After appending new <figure data-gallery-item> nodes call:
+         *   Gallery.refresh()   to register them with the lightbox.
+         */
+.gallery-masonry {
+    column-count: 3;
+    column-gap: 16px;
+}
+
+/* Tablet — 2 columns */
+@media (max-width: 991px) {
+    .gallery-masonry {
+        column-count: 2;
+    }
+}
+
+/* Mobile — 1 column */
+@media (max-width: 575px) {
+    .gallery-masonry {
+        column-count: 1;
+    }
+}
+
+/* ── Gallery item ────────────────────────────────────────────── */
+.gallery-item {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    display: block;
+    margin: 0 0 16px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    border-radius: 2px;
+    /* accent-1 bg shows as colour-matched placeholder while img loads */
+    background-color: var(--color-accent-1, #122223);
+}
+
+.gallery-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition:
+        transform 0.55s cubic-bezier(0.165, 0.84, 0.44, 1),
+        filter 0.55s cubic-bezier(0.165, 0.84, 0.44, 1);
+    will-change: transform;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.04);
+    filter: brightness(0.8);
+}
+
+/* Zoom icon overlay */
+.gallery-item__zoom {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.gallery-item:hover .gallery-item__zoom {
+    opacity: 1;
+}
+
+.gallery-item__zoom svg {
+    width: 46px;
+    height: 46px;
+    color: #fff;
+    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.4));
+}
+
+/* ================================================================
+           LIGHTBOX — zero dependencies
+           Keyboard: Escape = close  |  ← → = navigate
+           Touch:    swipe left/right = navigate
+        ================================================================ */
+
+#glb-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(10, 16, 18, 0.97);
+    align-items: center;
+    justify-content: center;
+}
+
+#glb-lightbox.is-open {
+    display: flex;
+    animation: glbFadeIn 0.28s ease forwards;
+}
+
+@keyframes glbFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.glb-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.glb-img-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.glb-img {
+    display: block;
+    max-width: 88vw;
+    max-height: 86vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 2px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.65);
+    animation: glbImgIn 0.32s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes glbImgIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Counter — "3 / 12" */
+.glb-counter {
+    position: absolute;
+    bottom: -38px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-primary, "Jost", sans-serif);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.38);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Close button */
+.glb-close {
+    position: fixed;
+    top: 28px;
+    right: 32px;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease;
+    z-index: 10001;
+}
+
+.glb-close:hover {
+    background: rgba(249, 218, 186, 0.14);
+    border-color: rgba(249, 218, 186, 0.48);
+}
+
+.glb-close svg {
+    width: 17px;
+    height: 17px;
+    color: #fff;
+    pointer-events: none;
+}
+
+/* Prev / Next arrows */
+.glb-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 50%;
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.25s ease;
+    z-index: 10001;
+}
+
+.glb-nav:hover {
+    background: rgba(249, 218, 186, 0.16);
+    border-color: rgba(249, 218, 186, 0.46);
+}
+
+.glb-nav--prev {
+    left: 28px;
+}
+
+.glb-nav--next {
+    right: 28px;
+}
+
+.glb-nav--prev:hover {
+    transform: translateY(-50%) translateX(-3px);
+}
+
+.glb-nav--next:hover {
+    transform: translateY(-50%) translateX(3px);
+}
+
+.glb-nav svg {
+    width: 20px;
+    height: 20px;
+    color: #fff;
+    pointer-events: none;
+}
+
+@media (max-width: 575px) {
+    .glb-nav {
+        width: 42px;
+        height: 42px;
+    }
+
+    .glb-nav--prev {
+        left: 10px;
+    }
+
+    .glb-nav--next {
+        right: 10px;
+    }
+
+    .glb-close {
+        right: 14px;
+        top: 14px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .glb-img {
+        max-width: 94vw;
+        max-height: 80vh;
+    }
+}

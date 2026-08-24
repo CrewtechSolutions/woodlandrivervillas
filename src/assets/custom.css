@@ -1,0 +1,364 @@
+/* Custom CSS Overrides for React Integration & Animations */
+
+/* Prevent horizontal scrollbar leaks */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Icomoon Icon Font Definition */
+@font-face {
+  font-family: 'icomoon';
+  src: url('/assets/fonts/icomoon597e.eot?#iefix') format('embedded-opentype'),
+       url('/assets/fonts/icomoon597e.ttf') format('truetype'),
+       url('/assets/fonts/icomoon597e.woff') format('woff'),
+       url('/assets/fonts/icomoon597e.svg#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Video wrapper ratio & sizing */
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* PageHero Styles & Background Image */
+.pageHero {
+  position: relative;
+  min-height: 540px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 180px;
+  padding-bottom: 100px;
+  overflow: hidden;
+}
+
+.pageHero__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.pageHero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.pageHero__bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(18, 34, 35, 0.5);
+  z-index: 1;
+}
+
+.pageHero .container {
+  position: relative;
+  z-index: 2;
+}
+
+.pageHero__title {
+  font-size: 64px;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+@media (max-width: 767px) {
+  .pageHero {
+    min-height: 400px;
+    padding-top: 140px;
+    padding-bottom: 60px;
+  }
+  .pageHero__title {
+    font-size: 38px;
+  }
+}
+
+/* Header Sticky & Scroll States */
+header.header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+  transition: background-color 0.35s ease, padding 0.35s ease, opacity 0.35s ease;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+header.header.is-sticky {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  background-color: var(--color-dark-2, #122223) !important;
+  opacity: 0.95 !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+header.header .header__container {
+  pointer-events: auto !important;
+  transition: padding 0.35s ease;
+}
+
+header.header.is-sticky .header__container {
+  padding-top: 25px !important;
+  padding-bottom: 25px !important;
+}
+
+header.header button,
+header.header a,
+header.header input,
+header.header div {
+  pointer-events: auto !important;
+}
+
+header.header.is-hidden-on-scroll {
+  transform: none !important;
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Navigation Menu React State Handling */
+.menuFullScreen {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 20000;
+  overflow-y: auto;
+}
+
+.menuFullScreen.is-open,
+.menuFullScreen.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.menuFullScreen__left {
+  transform: translateX(-100%);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menuFullScreen.is-open .menuFullScreen__left,
+.menuFullScreen.is-active .menuFullScreen__left {
+  transform: translateX(0);
+}
+
+.menuFullScreen__right {
+  transform: translateX(100%);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menuFullScreen.is-open .menuFullScreen__right,
+.menuFullScreen.is-active .menuFullScreen__right {
+  transform: translateX(0);
+}
+
+/* Hero Slider Number Pagination & Bottom Center Alignment */
+.hero.-type-9 {
+  position: relative !important;
+}
+
+.hero.-type-9 .hero__pagination,
+.hero__pagination {
+  position: absolute !important;
+  bottom: 40px !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 99 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: auto !important;
+  margin: 0 auto !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 767px) {
+  .hero.-type-9 .hero__pagination,
+  .hero__pagination {
+    bottom: 20px !important;
+  }
+}
+
+.js-number-pag,
+.pagination.-number,
+.pagination.-type-number {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 15px !important;
+}
+
+.js-number-pag > *,
+.pagination.-number > *,
+.pagination.-type-number > * {
+  display: inline-flex !important;
+  align-items: center !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  color: #ffffff !important;
+  opacity: 0.5 !important;
+  cursor: pointer !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.js-number-pag > *.is-active,
+.js-number-pag > *.swiper-pagination-bullet-active,
+.pagination.-number > *.is-active,
+.pagination.-type-number > *.is-active {
+  opacity: 1 !important;
+  font-weight: 700 !important;
+}
+
+.js-number-pag > *:not(:last-child)::after,
+.pagination.-number > *:not(:last-child)::after,
+.pagination.-type-number > *:not(:last-child)::after {
+  content: '' !important;
+  display: inline-block !important;
+  width: 25px !important;
+  height: 1px !important;
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  margin-left: 15px !important;
+}
+
+/* Modal lightbox overlay */
+.react-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.react-modal-content {
+  position: relative;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  animation: scaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.react-modal-content img {
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.react-modal-close {
+  position: absolute;
+  top: -45px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.react-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Animation overrides for cross-page navigation visibility */
+.is-in-view {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+[data-anim-wrap].animated [data-anim-child] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+.split__line {
+  transform: translateY(0%) !important;
+  opacity: 1 !important;
+}
+
+/* React router scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
