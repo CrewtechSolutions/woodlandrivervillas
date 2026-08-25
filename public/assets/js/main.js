@@ -953,6 +953,16 @@
 
 
     function init() {
+      if (App.SMcontroller) {
+        try {
+          App.SMcontroller.destroy(true);
+        } catch (e) {
+          // ignore
+        }
+      }
+      if (typeof ScrollMagic !== 'undefined') {
+        App.SMcontroller = new ScrollMagic.Controller();
+      }
       single();
       container();
     }
@@ -975,6 +985,7 @@
     if (!target.length) return;
 
     target.forEach(el => {
+      if (el.querySelector('.split__line')) return;
       let content;
       let test = el.querySelectorAll('* > *:not(br):not(span)');
 

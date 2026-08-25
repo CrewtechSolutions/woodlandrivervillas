@@ -7,12 +7,9 @@ import { siteConfig } from '../data/siteConfig';
 
 export const AboutPage: React.FC = () => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (typeof (window as any).initApp === 'function') {
-        (window as any).initApp();
-      }
-    }, 150);
-    return () => clearTimeout(timer);
+    if (typeof (window as any).initApp === 'function') {
+      (window as any).initApp();
+    }
   }, []);
 
   const testimonials = [

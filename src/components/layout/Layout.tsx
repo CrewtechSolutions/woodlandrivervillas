@@ -17,28 +17,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     window.scrollTo(0, 0);
     setIsMenuOpen(false);
 
-    const initAnimations = () => {
-      if (typeof (window as any).initApp === 'function') {
-        (window as any).initApp();
-      }
-
-      // Safety fallback: ensure cross-page mounted elements reveal smoothly and never stay hidden
-      setTimeout(() => {
-        document.querySelectorAll('[data-anim-wrap]').forEach((wrap) => {
-          wrap.classList.add('animated');
-        });
-
-        document.querySelectorAll('[data-anim], [data-anim-child]').forEach((el) => {
-          el.classList.add('is-in-view');
-          el.querySelectorAll('.split__line').forEach((line) => {
-            (line as HTMLElement).style.transform = 'translateY(0%)';
-          });
-        });
-      }, 100);
-    };
-
-    const timer = setTimeout(initAnimations, 50);
-    return () => clearTimeout(timer);
+    if (typeof (window as any).initApp === 'function') {
+      (window as any).initApp();
+    }
   }, [location.pathname]);
 
   return (
