@@ -25,7 +25,7 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({ isOpen, onClose 
     }
   }, [location.pathname]);
 
-  // Handle body scroll lock & GSAP open/close animations matching template main.js
+  // Handle body scroll lock & GSAP open/close animations
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -50,15 +50,18 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({ isOpen, onClose 
         const right = menu.querySelector('.js-menuFullScreen-right');
         const buttomMobile = menu.querySelector('.js-menuFullScreen-buttomMobile');
 
+        // Reset & kill existing animations
+        gsap.killTweensOf([mobileBg, bgImage, bg, topMobile, closeBtn, links, right, buttomMobile]);
+
         gsap.timeline()
-          .fromTo(mobileBg, { scaleY: 0 }, { scaleY: 1, duration: 1.2, ease: 'quart.inOut' })
-          .fromTo(bgImage, { scale: 1.3 }, { scale: 1, duration: 2.5, ease: 'expo.out' }, 0)
-          .fromTo(bg, { clipPath: 'rect(0px 100% 0% 0px)' }, { clipPath: 'rect(0px 100% 100% 0px)', duration: 1.2, ease: 'expo.inOut' }, '<')
-          .fromTo(topMobile, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'quart.out' }, '<+0.6')
-          .fromTo(closeBtn, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'quart.out' }, '<')
-          .fromTo(links, { y: '100%' }, { y: '0%', duration: 0.6, stagger: 0.06, ease: 'quart.out' }, '>-0.4')
-          .fromTo(buttomMobile, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: 'quart.out' }, '>-0.4')
-          .fromTo(right, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.6, ease: 'quart.out' }, '<');
+          .fromTo(mobileBg, { scaleY: 0 }, { scaleY: 1, duration: 0.8, ease: 'quart.inOut' })
+          .fromTo(bgImage, { scale: 1.2 }, { scale: 1, duration: 1.8, ease: 'expo.out' }, 0)
+          .fromTo(bg, { clipPath: 'rect(0px 100% 0% 0px)' }, { clipPath: 'rect(0px 100% 100% 0px)', duration: 0.8, ease: 'expo.inOut' }, 0)
+          .fromTo(topMobile, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5, ease: 'quart.out' }, 0.3)
+          .fromTo(closeBtn, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5, ease: 'quart.out' }, 0.3)
+          .fromTo(links, { y: '50%', opacity: 0 }, { y: '0%', opacity: 1, duration: 0.5, stagger: 0.05, ease: 'quart.out' }, 0.3)
+          .fromTo(buttomMobile, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'quart.out' }, 0.4)
+          .fromTo(right, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.5, ease: 'quart.out' }, 0.3);
       }
     } else {
       document.body.classList.remove('html-overflow-hidden');

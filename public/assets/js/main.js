@@ -5,6 +5,19 @@
 
   window.App = {};
 
+  let initAppDebounceTimer = null;
+  window.initApp = function () {
+    if (initAppDebounceTimer) clearTimeout(initAppDebounceTimer);
+    initAppDebounceTimer = setTimeout(() => {
+      if (typeof initComponents === 'function') {
+        initComponents();
+      }
+      if (typeof RevealAnim !== 'undefined' && typeof RevealAnim.init === 'function') {
+        RevealAnim.init();
+      }
+    }, 60);
+  };
+
   App.config = {
     cursorFollower: {
       enabled: true,
@@ -335,6 +348,14 @@
     for (let i = 0; i < sectionSlider.length; i++) {
       const el = sectionSlider[i];
 
+      if (el.swiper) {
+        try {
+          el.swiper.destroy(true, true);
+        } catch (err) {
+          // ignore
+        }
+      }
+
       let vertical = "horizontal"
       let prevNavElement = el.querySelector('.js-prev')
       let nextNavElement = el.querySelector('.js-next')
@@ -371,6 +392,9 @@
 
       if (el.getAttribute('data-number-pagination')) {
         let paginationElement = document.querySelector(`.${el.getAttribute('data-number-pagination')}`);
+        if (paginationElement) {
+          paginationElement.innerHTML = '';
+        }
 
         pagination = {
           el: paginationElement,
@@ -425,6 +449,8 @@
       });
 
       new Swiper(el, {
+        observer: true,
+        observeParents: true,
         speed: 600,
         autoHeight: true,
         autoplay: {
@@ -1752,8 +1778,8 @@
   }
 
   function menuFullScreen() {
-    const menu = document.querySelector('.js-menuFullScreen');
-    if (!menu) return;
+    // Menu opening, closing, and GSAP timelines are managed exclusively by React NavigationMenu component
+    return;
 
     const openBtn = document.querySelectorAll('.js-menuFullScreen-open');
     const closeBtn = document.querySelectorAll('.js-menuFullScreen-close');

@@ -155,7 +155,6 @@ header.header.is-hidden-on-scroll {
 .menuFullScreen {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
   visibility: hidden;
   position: fixed;
   top: 0;
@@ -164,6 +163,7 @@ header.header.is-hidden-on-scroll {
   height: 100vh;
   z-index: 20000;
   overflow-y: auto;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .menuFullScreen.is-open,
@@ -171,26 +171,6 @@ header.header.is-hidden-on-scroll {
   opacity: 1;
   pointer-events: auto;
   visibility: visible;
-}
-
-.menuFullScreen__left {
-  transform: translateX(-100%);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.menuFullScreen.is-open .menuFullScreen__left,
-.menuFullScreen.is-active .menuFullScreen__left {
-  transform: translateX(0);
-}
-
-.menuFullScreen__right {
-  transform: translateX(100%);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.menuFullScreen.is-open .menuFullScreen__right,
-.menuFullScreen.is-active .menuFullScreen__right {
-  transform: translateX(0);
 }
 
 /* Hero Slider Number Pagination & Bottom Center Alignment */

@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { siteConfig } from '../../data/siteConfig';
 
 export const HeroSlider: React.FC = () => {
+  useEffect(() => {
+    if (typeof (window as any).initApp === 'function') {
+      (window as any).initApp();
+    }
+  }, []);
   const slides = [
     {
       img: '/assets/img/hero/9/1.jpg',

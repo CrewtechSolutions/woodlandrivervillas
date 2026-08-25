@@ -2,12 +2,9 @@ import React, { useEffect } from 'react';
 
 export const VillaWorldSlider: React.FC = () => {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (typeof (window as any).initApp === 'function') {
-        (window as any).initApp();
-      }
-    }, 150);
-    return () => clearTimeout(timer);
+    if (typeof (window as any).initApp === 'function') {
+      (window as any).initApp();
+    }
   }, []);
 
   const cards = [
