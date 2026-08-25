@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react';
-import { villasData } from '../../data/villasData';
+import { useVillas } from '../../context/VillaContext';
 
 export const VillaGrid: React.FC = () => {
+  const { villas } = useVillas();
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (typeof (window as any).initApp === 'function') {
-        (window as any).initApp();
-      }
-    }, 150);
-    return () => clearTimeout(timer);
-  }, []);
+    if (typeof (window as any).initApp === 'function') {
+      (window as any).initApp();
+    }
+  }, [villas]);
 
   return (
     <section data-anim-wrap className="layout-pt-md">
@@ -39,7 +38,7 @@ export const VillaGrid: React.FC = () => {
                 </div>
 
                 <div className="swiper-wrapper">
-                  {villasData.map((villa) => (
+                  {villas.map((villa) => (
                     <div key={villa.id} className="swiper-slide">
                       <div className="roomCard -type-1">
                         <div className="roomCard__image ratio ratio-92:60">

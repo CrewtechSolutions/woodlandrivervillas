@@ -7,6 +7,10 @@ export interface Villa {
   bedrooms: string;
   bathrooms: string;
   guests: string;
+  maxGuests?: number;
+  pricePerNight?: number;
+  securityDeposit?: number;
+  cleaningFee?: number;
   heroImage: string;
   galleryImages: string[];
   features: string[];

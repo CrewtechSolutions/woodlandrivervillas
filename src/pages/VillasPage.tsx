@@ -2,12 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { PageHero } from '../components/common/PageHero';
-import { villasData } from '../data/villasData';
+import { useVillas } from '../context/VillaContext';
 import { siteConfig } from '../data/siteConfig';
 import { InstagramGrid } from '../components/sections/InstagramGrid';
 import { BookingCTA } from '../components/common/BookingCTA';
 
 export const VillasPage: React.FC = () => {
+  const { villas } = useVillas();
+
   return (
     <>
       <SEO
@@ -40,7 +42,7 @@ export const VillasPage: React.FC = () => {
         </div>
 
         <div className="px-60 md:px-15">
-          {villasData.map((villa, idx) => {
+          {villas.map((villa, idx) => {
             const isReverse = idx % 2 !== 0;
             return (
               <div key={villa.id} className="roomCard -type-2 pt-100 sm:pt-50">
