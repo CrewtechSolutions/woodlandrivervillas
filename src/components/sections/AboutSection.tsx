@@ -95,7 +95,7 @@ export const AboutSection: React.FC = () => {
           <div className="col-lg-4 col-sm-6">
             <div className="pt-100 md:pt-0">
               <div data-anim-child="img-right cover-light-1 delay-3" className="rounded-16">
-                <img src="/assets/img/about/8/2.png" alt="Woodland River Villa" className="img-ratio rounded-16" loading="lazy" />
+                <img src="/assets/img/about/8/2.png" alt="Woodland River Villa" className="rounded-16 col-12" loading="lazy" />
               </div>
             </div>
           </div>
