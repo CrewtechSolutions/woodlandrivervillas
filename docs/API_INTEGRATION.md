@@ -1,10 +1,13 @@
-# Catalogue API Integration Specification
+# Catalogue, Auth & My Bookings API Integration Specification
 
 ## 🌐 Endpoint Details
 
-- **Base URL**: `https://api.amigomarkethub.com/api/public/v1/catalogue`
-- **HTTP Method**: `GET`
-- **Required Header**: `x-api-key: mk_8ea1437b92745ed3576ef6773956e5054b817afc9c33e75ee87af6863c219399`
+- **Catalogue Base URL**: `https://api.amigomarkethub.com/api/public/v1/catalogue`
+- **Auth Base URL**: `https://api.amigomarkethub.com/api/public/v1/auth`
+- **My Bookings Endpoint**: `https://api.amigomarkethub.com/api/public/v1/my-bookings`
+- **Required Headers**:
+  - `x-api-key: mk_8ea1437b92745ed3576ef6773956e5054b817afc9c33e75ee87af6863c219399`
+  - `Authorization: Bearer <token>` (for authenticated user session calls)
 
 ---
 
@@ -13,6 +16,7 @@
 The API configuration is loaded from `.env`:
 
 ```env
+VITE_BASE_URL=https://api.amigomarkethub.com/api/public/v1
 VITE_CATALOGUE_API_URL=https://api.amigomarkethub.com/api/public/v1/catalogue
 VITE_CATALOGUE_API_KEY=mk_8ea1437b92745ed3576ef6773956e5054b817afc9c33e75ee87af6863c219399
 ```
@@ -21,22 +25,23 @@ VITE_CATALOGUE_API_KEY=mk_8ea1437b92745ed3576ef6773956e5054b817afc9c33e75ee87af6
 
 ## 🔄 API Service Layer (`src/services/apiService.ts`)
 
-The `catalogueApiService` object executes HTTP requests to Amigo Market Hub and maps raw catalogue items into standard `Villa` domain objects.
+### 1. Catalogue Service (`catalogueApiService`)
+Maps raw catalogue items into standard `Villa` domain objects.
+- **Products Filtering**: Only active items matching villa/cabana patterns are processed.
+- **Photo Assets**: Extracted from `attributes.photos`.
+- **Pricing & Deposits**: Calculated from primary `offerings[0]`.
 
-### Data Mapping Rules:
-1. **Products Filtering**: Only items with type `PRODUCT` or matching villa/cabana names are processed.
-2. **Slug Generation**: Generated dynamically from product name (e.g. `"OAKWOOD VILLA"` → `"oakwood-villa"`).
-3. **Photo Asset URLs**: Extracted from `attributes.photos` array (`https://assets.crowninnhotel.in/...`).
-4. **Room & Guest Specs**:
-   - `attributes.no_of_rooms` → `bedrooms` (e.g. `'4 BEDROOMS'` or `'1 BEDROOM W/ PRIVATE POOL'`)
-   - `attributes.no_of_bathrooms` → `bathrooms` (e.g. `'5 BATHROOMS'` or `'1 BATHROOM'`)
-   - `attributes.guests_allowed` → `maxGuests` / `guests` (e.g. `'8 GUESTS & MORE'`)
-5. **Pricing & Deposits**:
-   - `offerings[0].priceCents` / 100 → `pricePerNight`
-   - `offerings[0].depositCents` / 100 → `securityDeposit`
-6. **Caching**: Response is cached in `localStorage` (`wv_villas_cache`) for instant load on repeat visits.
+### 2. Auth Service (`authApiService`)
+Handles guest authentication and account management:
+- `checkEmail(email)`: `POST /auth/check-email` with `{ email }`. Returns `{ exists: boolean }`.
+- `login({ email, password })`: `POST /auth/login` with `{ email, password }`. Returns `{ token, user }`.
+- `register({ name, email, password, phone })`: `POST /auth/register` with `{ name, email, password, phone }`. Returns `{ token, user }`.
+
+### 3. Booking Service (`bookingApiService`)
+Handles reservation management:
+- `getMyBookings(token?)`: `GET /my-bookings`. Returns array of `Booking` objects containing booking code, villa name, check-in, check-out dates, guest counts, pricing, and status.
 
 ---
 
 ## ⚠️ Pure Dynamic Rule
-No static fallback mocks exist. If the API call fails or returns empty data, the system returns an empty array `[]` and reports the error via `VillaContext`.
+No static fallback mocks exist. All dynamic villa, auth, and reservation data is fetched live from API integration.

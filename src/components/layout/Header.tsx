@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { siteConfig } from '../../data/siteConfig';
+import { useAuth } from '../../context/AuthContext';
 
 interface HeaderProps {
   onOpenMenu: () => void;
@@ -8,6 +9,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onOpenMenu }) => {
   const [isSticky, setIsSticky] = useState(false);
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,13 +46,26 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMenu }) => {
         </div>
 
         <div className="header__right d-flex items-center h-full">
-          <a href={`tel:${siteConfig.phoneNumbers[0].replace(/\s+/g, '')}`} className="button text-white mr-60 lg:d-none">
+          <a href={`tel:${siteConfig.phoneNumbers[0].replace(/\s+/g, '')}`} className="button text-white mr-40 lg:d-none">
             <i className="icon-phone mr-15"></i>
             {siteConfig.phoneNumbers[0]}
           </a>
 
+          <Link
+            to={isAuthenticated ? '/account' : '/login'}
+            className="button d-inline-flex items-center text-white mr-30 hover-accent"
+            aria-label="User Account"
+          >
+            <div className="size-36 rounded-full bg-white/10 flex-center mr-10 border-1 border-white/20">
+              <i className="icon-guest text-16 text-accent-1"></i>
+            </div>
+            <span className="text-14 fw-600 sm:d-none">
+              {isAuthenticated && user ? user.name.split(' ')[0] : 'SIGN IN'}
+            </span>
+          </Link>
+
           <a
-            className="button d-inline-flex -md -blur-1 text-white rounded-200 mr-30 lg:d-none"
+            className="button d-inline-flex -md -blur-1 text-white rounded-200 mr-20 lg:d-none"
             href={siteConfig.bookingUrl}
             target="_blank"
             rel="noopener noreferrer"

@@ -58,3 +58,57 @@ export interface SiteConfig {
     youtube: string;
   };
 }
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role?: string;
+  createdAt?: string;
+}
+
+export interface CheckEmailResponse {
+  exists: boolean;
+  message?: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: AuthUser;
+  message?: string;
+}
+
+export interface Booking {
+  id: string;
+  bookingCode?: string;
+  villaName: string;
+  villaSlug?: string;
+  heroImage?: string;
+  checkIn: string;
+  checkOut: string;
+  checkInTime?: string;
+  checkOutTime?: string;
+  guests: number | string;
+  additionalGuests?: number;
+  guestsDisplay?: string;
+  totalPrice: number;
+  currency?: string;
+  status: 'confirmed' | 'pending' | 'completed' | 'cancelled';
+  createdAt?: string;
+  raw?: any;
+}
+
+export interface ComplaintTicket {
+  id: string;
+  bookingId: string;
+  bookingCode: string;
+  villaName: string;
+  category: 'housekeeping' | 'amenities' | 'billing' | 'staff_service' | 'maintenance' | 'other';
+  subject: string;
+  description: string;
+  status: 'open' | 'in_progress' | 'resolved';
+  priority: 'low' | 'medium' | 'high';
+  createdAt: string;
+  resolutionNote?: string;
+}

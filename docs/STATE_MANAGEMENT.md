@@ -17,6 +17,27 @@ interface VillaContextType {
 
 ---
 
+## 🔑 AuthContext Provider (`src/context/AuthContext.tsx`)
+
+User authentication state is managed globally by `AuthProvider` and consumed via the `useAuth()` hook.
+
+```tsx
+interface AuthContextType {
+  user: AuthUser | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+  checkEmail: (email: string) => Promise<{ exists: boolean; message?: string }>;
+  login: (payload: { email: string; password: string }) => Promise<void>;
+  register: (payload: { name: string; email: string; password: string; phone?: string }) => Promise<void>;
+  logout: () => void;
+}
+```
+
+- **Session Persistence**: User token (`token`) and profile data (`user`) are saved in `localStorage` (`wv_auth_token` and `wv_auth_user`).
+
+---
+
 ## ⚡ Animation Synchronization Protocol
 
 Because villa elements are rendered dynamically after the API call finishes, page animations (`ScrollMagic` triggers, GSAP timelines, Swiper carousels) MUST be synchronized with the completion of data loading.
@@ -34,8 +55,3 @@ useEffect(() => {
   }
 }, [loading, villas.length]);
 ```
-
-### Why This Sequence is Critical:
-1. When `loading === true`, React renders initial loading states.
-2. When API data arrives, `setLoading(false)` causes React to commit new `.roomCard`, `.swiper-slide`, and section containers into the DOM.
-3. The 120ms timeout ensures DOM layout calculations are finalized before `window.initApp()` invokes `RevealAnim.init()`, preventing 0-height element measurement bugs.

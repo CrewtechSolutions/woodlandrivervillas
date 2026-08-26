@@ -22,7 +22,7 @@ export const VillaProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setLoading(true);
     setError(null);
     try {
-      const data = await catalogueApiService.getVillas(force);
+      const data = await catalogueApiService.getVillas();
       setVillas(data);
     } catch (err: any) {
       console.error('Error in VillaProvider fetchVillas:', err);

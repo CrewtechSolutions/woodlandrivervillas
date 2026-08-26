@@ -15,6 +15,7 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({ isOpen, onClose 
     { label: 'OUR VILLAS', path: '/our-villas' },
     { label: 'ABOUT US', path: '/about' },
     { label: 'GALLERY', path: '/gallery' },
+    { label: 'MY ACCOUNT', path: '/account' },
     { label: 'CONTACT', path: '/contact' },
   ];
 
