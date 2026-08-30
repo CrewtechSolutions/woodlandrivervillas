@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { siteConfig } from '../../data/siteConfig';
 
 export const HeroSlider: React.FC = () => {
@@ -64,14 +65,14 @@ export const HeroSlider: React.FC = () => {
                           </div>
 
                           <div data-anim-child="slide-up delay-5" className="d-flex justify-center mt-60 md:mt-30">
-                            <a
-                              className="button d-inline-flex -md -type-2 bg-accent-2 -accent-1 rounded-200"
-                              href={siteConfig.bookingUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Book Your Stay
-                            </a>
+                            <div className="mt-40 md:mt-30">
+                              <Link
+                                to="/catalogue"
+                                className="button d-inline-flex -md -type-2 -outline-white text-white"
+                              >
+                                BOOK YOUR STAY
+                              </Link>
+                            </div>
                           </div>
                         </div>
                       </div>

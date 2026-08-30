@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { PageHero } from '../components/common/PageHero';
 import { InstagramGrid } from '../components/sections/InstagramGrid';
@@ -62,27 +63,13 @@ export const AboutPage: React.FC = () => {
                   </p>
                 </div>
 
-                <div data-anim-child="slide-up delay-9">
-                  <a
-                    className="button d-inline-flex -type-1 mx-auto mt-60 md:mt-30"
-                    href={siteConfig.bookingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <div className="mt-40 md:mt-30" data-anim-child="slide-up delay-4">
+                  <Link
+                    to="/catalogue"
+                    className="button d-inline-flex -md -type-2 -outline-dark-1 text-dark-1"
                   >
-                    <i className="-icon">
-                      <svg width="50" height="30" viewBox="0 0 50 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M35.8 28.0924C43.3451 28.0924 49.4616 21.9759 49.4616 14.4308C49.4616 6.88577 43.3451 0.769287 35.8 0.769287C28.255 0.769287 22.1385 6.88577 22.1385 14.4308C22.1385 21.9759 28.255 28.0924 35.8 28.0924Z"
-                          stroke="#122223"
-                        />
-                        <path
-                          d="M33.4808 10.2039L32.9985 10.8031L37.2931 14.2623H0.341553V15.0315H37.28L33.0008 18.4262L33.4785 19.0285L39 14.6492L33.4808 10.2039Z"
-                          fill="#122223"
-                        />
-                      </svg>
-                    </i>
                     BOOK YOUR STAY
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -105,7 +92,7 @@ export const AboutPage: React.FC = () => {
                 Woodland river villa was built around a simple idea to create a stay that feels seamless from the moment you arrive. Every detail is maintained with care, from the layout of the villas to the overall experience, ensuring a setting that feels composed, comfortable, and thoughtfully managed.
               </p>
               <div data-anim-child="slide-up delay-4" className="d-flex mt-50 md:mt-40">
-                <a href={siteConfig.bookingUrl} target="_blank" rel="noopener noreferrer" className="button -type-1">
+                <Link to="/catalogue" className="button -type-1">
                   <i className="-icon">
                     <svg width="50" height="30" viewBox="0 0 50 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
@@ -119,7 +106,7 @@ export const AboutPage: React.FC = () => {
                     </svg>
                   </i>
                   READ MORE
-                </a>
+                </Link>
               </div>
 
               <div data-anim-child="slide-up delay-5" className="row y-gap-30 pt-40 md:pt-0">

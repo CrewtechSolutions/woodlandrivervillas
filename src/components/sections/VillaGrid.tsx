@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useVillas } from '../../context/VillaContext';
 
 export const VillaGrid: React.FC = () => {
@@ -49,18 +50,27 @@ export const VillaGrid: React.FC = () => {
                           <div className="d-flex justify-between items-start">
                             <div>
                               <h3 className="roomCard__title lh-065 text-40 md:text-30 mb-4">
-                                <a href={villa.bookingUrl} target="_blank" rel="noopener noreferrer">
+                                <Link to={`/our-villas/${villa.slug}`}>
                                   {villa.name}
-                                </a>
+                                </Link>
                               </h3>
                               <p className="roomCard__description text-20 md:text-12">{villa.description}</p>
                             </div>
                           </div>
 
-                          <div className="d-flex x-gap-15 md:text-15 pt-30 md:pt-20">
-                            <div>{villa.bedrooms},</div>
-                            <div>{villa.bathrooms},</div>
-                            <div>{villa.guests}</div>
+                          <div className="d-flex x-gap-20 md:text-15 pt-30 md:pt-20 flex-wrap y-gap-10">
+                            <div className="d-flex items-center text-sec text-15 fw-500">
+                              <i className="icon-bed mr-8 text-20 text-accent-1"></i>
+                              {villa.bedrooms} Bedrooms
+                            </div>
+                            <div className="d-flex items-center text-sec text-15 fw-500">
+                              <i className="icon-bath mr-8 text-20 text-accent-1"></i>
+                              {villa.bathrooms} Baths
+                            </div>
+                            <div className="d-flex items-center text-sec text-15 fw-500">
+                              <i className="icon-guest mr-8 text-20 text-accent-1"></i>
+                              Up to {villa.maxGuests} Guests
+                            </div>
                           </div>
                         </div>
                       </div>

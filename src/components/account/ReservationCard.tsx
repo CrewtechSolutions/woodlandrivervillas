@@ -95,12 +95,42 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({ booking, user 
 
         {/* RIGHT COLUMN: PRICE & EQUAL SIZED ACTION BUTTONS */}
         <div className="col-lg-3 col-md-3 text-right md:text-left border-left-light md:border-left-0 pt-10">
-          <div className="text-11 uppercase text-sec mb-4 tracking-wider fw-700">TOTAL AMOUNT PAID</div>
-          <div className="text-32 font-serif fw-700 text-accent-1 mb-16">
-            ₹{booking.totalPrice.toLocaleString('en-IN')}
-          </div>
+          
+          {booking.paymentHistory && booking.paymentHistory.length > 0 ? (
+            <div className="mb-16">
+              <div className="text-11 uppercase text-sec mb-4 tracking-wider fw-700">PAYMENT BREAKDOWN</div>
+              {booking.paymentHistory.map((p, idx) => (
+                <div key={idx} className="d-flex justify-between md:justify-start md:x-gap-10 items-center text-13">
+                  <span className="text-sec">
+                    {p.notes?.includes('Deposit') ? 'Security Deposit' : 'Rent Paid'}:
+                  </span>
+                  <span className="fw-700 text-dark-1">
+                    ₹{(p.amountCents / 100).toLocaleString('en-IN')}
+                  </span>
+                </div>
+              ))}
+              <div className="border-top-light mt-6 pt-6 d-flex justify-between md:justify-start md:x-gap-10 items-center text-14 fw-700 text-accent-1">
+                <span>TOTAL:</span>
+                <span>₹{booking.totalPrice.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="text-11 uppercase text-sec mb-4 tracking-wider fw-700">TOTAL AMOUNT PAID</div>
+              <div className="text-32 font-serif fw-700 text-accent-1 mb-16">
+                ₹{booking.totalPrice.toLocaleString('en-IN')}
+              </div>
+            </>
+          )}
 
           <div className="d-flex flex-column y-gap-10">
+            <Link
+              to={`/account/bookings/${booking.id}`}
+              className="button bg-dark-1 text-white rounded-200 py-15 text-13 fw-600 tracking-wider mb-10 w-1/1 d-flex justify-center items-center"
+            >
+              <i className="icon-setting text-15 mr-10"></i> MANAGE BOOKING
+            </Link>
+
             <button
               onClick={() => generateInvoicePdf(booking, user)}
               className="btn-card-invoice"

@@ -27,8 +27,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const savedUserStr = localStorage.getItem('wv_auth_user');
 
       if (savedToken && savedUserStr) {
-        setToken(savedToken);
-        setUser(JSON.parse(savedUserStr));
+        // Check if token is expired
+        let isExpired = false;
+        try {
+          const payload = JSON.parse(atob(savedToken.split('.')[1]));
+          if (payload.exp && payload.exp * 1000 < Date.now()) {
+            isExpired = true;
+          }
+        } catch (e) {
+          isExpired = true; // Invalid token format
+        }
+
+        if (isExpired) {
+          console.warn('Auth token expired, clearing session.');
+          localStorage.removeItem('wv_auth_token');
+          localStorage.removeItem('wv_auth_user');
+        } else {
+          setToken(savedToken);
+          setUser(JSON.parse(savedUserStr));
+        }
       }
     } catch (e) {
       console.warn('Failed to restore auth session:', e);

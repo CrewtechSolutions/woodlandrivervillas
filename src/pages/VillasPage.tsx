@@ -87,14 +87,13 @@ export const VillasPage: React.FC = () => {
                         >
                           EXPLORE VILLA
                         </Link>
-                        <a
+                        <Link
+                          to={`/checkout/${villa.id}`}
+                          state={{ villa, startDate: '', endDate: '' }}
                           className="button d-inline-flex -md bg-accent-1 text-white rounded-200"
-                          href={siteConfig.bookingUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
                         >
                           BOOK NOW
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   </div>

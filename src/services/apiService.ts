@@ -4,8 +4,8 @@ const BASE_URL =
   import.meta.env.VITE_CATALOGUE_API_URL || 'https://api.amigomarkethub.com/api/public/v1/catalogue';
 const API_BASE_URL =
   import.meta.env.VITE_BASE_URL || 'https://api.amigomarkethub.com/api/public/v1';
-const AUTH_BASE_URL = `${API_BASE_URL.replace(/\/+$/, '')}/auth`;
-const BOOKINGS_BASE_URL = `${API_BASE_URL.replace(/\/+$/, '')}/public/v1/my-bookings`;
+const AUTH_BASE_URL = import.meta.env.VITE_AUTH_API_URL || `${API_BASE_URL}/auth`;
+const BOOKINGS_BASE_URL = `${API_BASE_URL.replace(/\/+$/, '')}/my-bookings`;
 const API_KEY =
   import.meta.env.VITE_CATALOGUE_API_KEY || 'mk_8ea1437b92745ed3576ef6773956e5054b817afc9c33e75ee87af6863c219399';
 
@@ -82,6 +82,7 @@ export const catalogueApiService = {
             id: p.id,
             slug: slug,
             name: p.name,
+            offeringId: mainOffering?.id,
             subtitle: `${p.attributes?.no_of_rooms || '4 BEDROOMS'} • ${p.attributes?.guests_allowed || '12 GUESTS'} • ALIBAG`,
             description: p.description || `${p.name} offers a luxurious, private riverfront sanctuary in Zirad, Alibaug featuring premium amenities and private pool access.`,
             bedrooms: String(p.attributes?.no_of_rooms || '4 Bedrooms'),
@@ -449,4 +450,163 @@ export const bookingApiService = {
       return [];
     }
   },
+};
+
+export const coreApiService = {
+  async getOccupiedDates(offeringId: string): Promise<{ start: string, end: string }[]> {
+    try {
+      const url = `${API_BASE_URL}/bookings/calendar?offeringId=${offeringId}`;
+      const response = await fetch(url, {
+        headers: { 'x-api-key': API_KEY }
+      });
+      if (!response.ok) throw new Error('Failed to fetch occupied dates');
+      const result = await response.json();
+      return result.data || result;
+    } catch (error) {
+      console.error('Error fetching occupied dates:', error);
+      return [];
+    }
+  },
+
+  async calculatePricing(payload: {
+    offeringId: string;
+    startDate: Date;
+    endDate: Date;
+    selectedAddons?: { id: string; quantity: number }[];
+  }): Promise<any> {
+    try {
+      const url = `${API_BASE_URL}/bookings/calculate`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY
+        },
+        body: JSON.stringify({
+          ...payload,
+          startDate: payload.startDate.toISOString(),
+          endDate: payload.endDate.toISOString(),
+        })
+      });
+      if (!response.ok) throw new Error('Failed to calculate pricing');
+      const result = await response.json();
+      return result.data || result;
+    } catch (error) {
+      console.error('Error calculating pricing:', error);
+      throw error;
+    }
+  },
+
+  async checkAvailability(payload: {
+    offeringId: string;
+    startDate: Date;
+    endDate: Date;
+    guests?: number;
+  }): Promise<{ available: boolean; message?: string; priceCents?: number }> {
+    try {
+      const url = `${API_BASE_URL}/bookings/availability`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY
+        },
+        body: JSON.stringify({
+          offeringId: payload.offeringId,
+          startDate: payload.startDate.toISOString(),
+          endDate: payload.endDate.toISOString(),
+          guests: payload.guests || 1
+        })
+      });
+      if (!response.ok) throw new Error('Failed to check availability');
+      const result = await response.json();
+      return result.data || result;
+    } catch (error) {
+      console.error('Error checking availability:', error);
+      // Fallback
+      return { available: true, message: 'Available' };
+    }
+  },
+
+  async createBooking(payload: {
+    offeringId: string;
+    startDate: Date;
+    endDate: Date;
+    notes?: string;
+    selectedAddons?: { id: string; quantity: number }[];
+  }): Promise<{ id: string; status: string; totalCents: number }> {
+    const token = localStorage.getItem('wv_auth_token') || 'wv_token_' + Date.now();
+    const userString = localStorage.getItem('wv_auth_user');
+    const user = userString ? JSON.parse(userString) : {};
+
+      const response = await fetch(`${API_BASE_URL}/bookings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'x-api-key': API_KEY
+      },
+      body: JSON.stringify({
+        offeringId: payload.offeringId,
+        startDate: payload.startDate.toISOString(),
+        endDate: payload.endDate.toISOString(),
+        customerId: user?.id,
+        notes: payload.notes,
+        quantity: 1,
+        selectedAddons: payload.selectedAddons || []
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to create booking.');
+    }
+
+    const result = await response.json();
+    return result.data || result;
+  },
+
+  async createRazorpayOrder(bookingId: string): Promise<any> {
+    const token = localStorage.getItem('wv_auth_token') || 'wv_token_' + Date.now();
+    const url = `${API_BASE_URL}/bookings/${bookingId}/razorpay-order`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to create payment order (HTTP ${response.status})`);
+    }
+
+    const result = await response.json();
+    return result.data || result;
+  },
+
+  async confirmBookingPayment(
+    bookingId: string,
+    referenceId: string,
+    method: 'RAZORPAY' | 'UPI',
+    amountCents?: number,
+    depositCents?: number
+  ): Promise<{ id: string; status: string }> {
+    const token = localStorage.getItem('wv_auth_token') || 'wv_token_' + Date.now();
+
+    const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}/payment`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'x-api-key': API_KEY
+      },
+      body: JSON.stringify({ referenceId, method, amountCents, depositCents })
+    });
+
+    const result = await response.json().catch(() => ({}));
+    return result.data || { id: bookingId, status: 'BOOKING_PENDING' };
+  }
 };

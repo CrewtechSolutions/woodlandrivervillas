@@ -166,14 +166,13 @@ export const NavigationMenu: React.FC<NavigationMenuProps> = ({ isOpen, onClose 
       </div>
 
       <div className="menuFullScreen__bottomMobile js-menuFullScreen-buttomMobile">
-        <a
-          className="button d-inline-flex rounded-200 w-1/1 py-20 -light-1 bg-accent-2 justify-center"
-          href={siteConfig.bookingUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          to="/catalogue"
+          className="button d-inline-flex -md -type-2 -outline-white text-white mt-40"
+          onClick={onClose}
         >
           BOOK YOUR STAY
-        </a>
+        </Link>
 
         <a href={`tel:${siteConfig.phoneNumbers[0].replace(/\s+/g, '')}`} className="d-flex items-center mt-40">
           <i className="icon-phone mr-10"></i>

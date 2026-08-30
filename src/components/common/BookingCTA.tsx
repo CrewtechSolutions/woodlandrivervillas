@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { siteConfig } from '../../data/siteConfig';
 
 interface BookingCTAProps {
@@ -19,14 +20,12 @@ export const BookingCTA: React.FC<BookingCTAProps> = ({
             <p className="text-20 text-white opacity-80 mt-30 md:mt-15">{subtitle}</p>
 
             <div className="d-flex justify-center items-center x-gap-30 y-gap-20 mt-50 flex-wrap">
-              <a
-                href={siteConfig.bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="button d-inline-flex -md bg-accent-1 text-white rounded-200"
+              <Link
+                to="/catalogue"
+                className="button d-inline-flex -md -type-2 -outline-white text-white"
               >
-                BOOK YOUR STAY NOW
-              </a>
+                BOOK YOUR STAY
+              </Link>
 
               <a
                 href={`tel:${siteConfig.phoneNumbers[0].replace(/\s+/g, '')}`}

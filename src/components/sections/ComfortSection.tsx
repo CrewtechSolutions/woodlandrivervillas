@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { siteConfig } from '../../data/siteConfig';
 
 export const ComfortSection: React.FC = () => {
@@ -29,11 +30,9 @@ export const ComfortSection: React.FC = () => {
             </div>
 
             <div data-anim-child="slide-up delay-4">
-              <a
+              <Link
                 className="button d-inline-flex -type-1 mt-60 md:mt-30"
-                href={siteConfig.bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                to="/catalogue"
               >
                 <i className="-icon">
                   <svg width="50" height="30" viewBox="0 0 50 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,7 +47,7 @@ export const ComfortSection: React.FC = () => {
                   </svg>
                 </i>
                 Book now
-              </a>
+              </Link>
             </div>
 
             <div className="lg:d-none mt-60 md:mt-30" data-anim-child="slide-up delay-6">

@@ -1,5 +1,6 @@
 export interface Villa {
   id: string;
+  offeringId?: string;
   slug: string;
   name: string;
   subtitle: string;
@@ -8,6 +9,8 @@ export interface Villa {
   bathrooms: string;
   guests: string;
   maxGuests?: number;
+  checkInTime?: string;
+  checkOutTime?: string;
   pricePerNight?: number;
   securityDeposit?: number;
   cleaningFee?: number;
@@ -15,6 +18,15 @@ export interface Villa {
   galleryImages: string[];
   features: string[];
   bookingUrl: string;
+  addons?: {
+    id: string;
+    name: string;
+    description: string;
+    priceCents: number;
+    priceType: string;
+    multiSelect: boolean;
+    maxQuantity?: number;
+  }[];
 }
 
 export interface Amenity {
@@ -94,9 +106,19 @@ export interface Booking {
   guestsDisplay?: string;
   totalPrice: number;
   currency?: string;
-  status: 'confirmed' | 'pending' | 'completed' | 'cancelled';
+  status: 'confirmed' | 'pending' | 'completed' | 'cancelled' | 'CONFIRMED' | 'PENDING' | 'COMPLETED' | 'CANCELLED';
   createdAt?: string;
+  paymentHistory?: any[];
   raw?: any;
+  totalCents: number;
+  paymentCents?: number;
+  depositCents?: number;
+  items?: any[];
+  metadata?: any;
+  notes?: string;
+  referenceId?: string;
+  startTime: string;
+  endTime: string;
 }
 
 export interface ComplaintTicket {

@@ -76,11 +76,16 @@ export const AccountPage: React.FC = () => {
   };
 
   const filteredBookings = bookings.filter((b) => {
+    const status = b.status?.toLowerCase();
+    
+    // Do not show pending bookings
+    if (status === 'pending') return false;
+    
     if (bookingFilter === 'upcoming') {
-      return b.status === 'confirmed' || b.status === 'pending';
+      return status === 'confirmed';
     }
     if (bookingFilter === 'past') {
-      return b.status === 'completed' || b.status === 'cancelled';
+      return status === 'completed' || status === 'cancelled';
     }
     return true;
   });
@@ -136,14 +141,12 @@ export const AccountPage: React.FC = () => {
             {/* RIGHT: EQUAL-SIZED ACTION BUTTONS (BOOK NEW VILLA STAY & SIGN OUT) */}
             <div className="col-lg-4 d-flex justify-end md:justify-start">
               <div className="d-flex flex-column sm:flex-row items-center x-gap-16 y-gap-12 w-1/1 sm:w-auto">
-                <a
-                  href={siteConfig.bookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/catalogue"
                   className="btn-hero-primary"
                 >
                   <i className="icon-bed mr-8 text-16"></i> BOOK NEW VILLA STAY
-                </a>
+                </Link>
 
                 <button
                   onClick={logout}
@@ -282,8 +285,8 @@ export const AccountPage: React.FC = () => {
           {activeTab === 'security' && (
             <div className="row y-gap-40 justify-center">
               <div className="col-lg-7">
-                <div className="p-40 sm:p-25 bg-white rounded-24 border-1 border-light-1 shadow-xs">
-                  <h3 className="text-28 fw-500 text-dark-1 mb-25 pb-15 border-bottom-light">Change Password</h3>
+                <div className="auth-card-luxury">
+                  <h3 className="text-28 font-serif fw-700 text-dark-1 mb-25 pb-15 border-bottom-light">Change Password</h3>
 
                   {securityMessage && (
                     <div className="p-15 mb-25 bg-light-1 text-accent-1 rounded-12 text-14 border-1 border-light-1">
@@ -293,10 +296,10 @@ export const AccountPage: React.FC = () => {
 
                   <form onSubmit={handlePasswordChange}>
                     <div className="mb-20">
-                      <label className="text-14 fw-600 text-dark-1 mb-8 d-block">Current Password *</label>
+                      <label className="text-13 fw-700 uppercase tracking-wider text-dark-1 mb-8 d-block">Current Password *</label>
                       <input
                         type="password"
-                        className="form-control rounded-12 p-16 border-1 border-light-1 w-1/1 text-16"
+                        className="form-control-luxury w-1/1"
                         placeholder="••••••••"
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
@@ -305,10 +308,10 @@ export const AccountPage: React.FC = () => {
                     </div>
 
                     <div className="mb-20">
-                      <label className="text-14 fw-600 text-dark-1 mb-8 d-block">New Password *</label>
+                      <label className="text-13 fw-700 uppercase tracking-wider text-dark-1 mb-8 d-block">New Password *</label>
                       <input
                         type="password"
-                        className="form-control rounded-12 p-16 border-1 border-light-1 w-1/1 text-16"
+                        className="form-control-luxury w-1/1"
                         placeholder="At least 6 characters"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
@@ -317,10 +320,10 @@ export const AccountPage: React.FC = () => {
                     </div>
 
                     <div className="mb-30">
-                      <label className="text-14 fw-600 text-dark-1 mb-8 d-block">Confirm New Password *</label>
+                      <label className="text-13 fw-700 uppercase tracking-wider text-dark-1 mb-8 d-block">Confirm New Password *</label>
                       <input
                         type="password"
-                        className="form-control rounded-12 p-16 border-1 border-light-1 w-1/1 text-16"
+                        className="form-control-luxury w-1/1"
                         placeholder="••••••••"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}

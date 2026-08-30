@@ -64,14 +64,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMenu }) => {
             </span>
           </Link>
 
-          <a
+          <Link
             className="button d-inline-flex -md -blur-1 text-white rounded-200 mr-20 lg:d-none"
-            href={siteConfig.bookingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            to="/catalogue"
           >
             BOOK YOUR STAY
-          </a>
+          </Link>
         </div>
       </div>
     </header>
