@@ -23,7 +23,7 @@ export const BookingDetailsPage: React.FC = () => {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [processing, setProcessing] = useState(false);
+  const [processing, setProcessing] = useState<string | false>(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -101,13 +101,16 @@ export const BookingDetailsPage: React.FC = () => {
       const orderRes = await coreApiService.createRazorpayOrder(booking.id);
       if (!orderRes.id) throw new Error('Failed to create payment order');
 
-      openRazorpayCheckout(
-        orderRes.id,
-        amountToPay,
-        user?.name || '',
-        user?.email || '',
-        user?.phone || '',
-        async (response: any) => {
+      openRazorpayCheckout({
+        amount: amountToPay,
+        name: 'Woodland River Villas',
+        description: isDeposit ? 'Security Deposit Payment' : 'Room Balance Payment',
+        prefill: {
+          name: user?.name || '',
+          email: user?.email || '',
+          contact: user?.phone || '',
+        },
+        onSuccess: async (response: any) => {
           await coreApiService.confirmBookingPayment(
             booking.id,
             response.razorpay_payment_id,
@@ -117,12 +120,11 @@ export const BookingDetailsPage: React.FC = () => {
           );
           window.location.reload();
         },
-        (errorRes: any) => {
-          console.error('Payment failed', errorRes);
+        onDismiss: () => {
           setError('Payment failed or cancelled.');
           setProcessing(false);
         }
-      );
+      });
     } catch (err: any) {
       setError(err.message || 'Payment initialization failed.');
       setProcessing(false);
@@ -154,7 +156,7 @@ export const BookingDetailsPage: React.FC = () => {
   const checkOut = new Date(rawData.endTime || booking.checkOut);
   
   // Safely parse cents
-  const totalCents = Number(rawData.totalCents ?? (booking.totalPrice * 100) ?? 0) || 0;
+  const totalCents = Number(rawData.totalCents ?? (booking.totalPrice * 100)) || 0;
   const paymentCents = Number(rawData.paymentCents ?? 0) || 0;
   const remainingBalance = Math.max(0, totalCents - paymentCents);
   
@@ -177,7 +179,7 @@ export const BookingDetailsPage: React.FC = () => {
     <>
       <SEO title={`Booking Details - ${villaName} | Woodland River Villa`} description="View your booking details and manage payments." />
 
-      <section className="pageHero -type-1 -items-center relative overflow-hidden" style={{ minHeight: '35vh', padding: '140px 0 80px 0' }}>
+      <section className="pageHero -type-1 -items-center relative overflow-hidden" style={{ minHeight: '35vh', padding: '200px 0 80px 0' }}>
         <div className="pageHero__bg">
           <img src="/assets/img/pageHero/1.png" alt="Woodland River Villa" loading="lazy" />
         </div>

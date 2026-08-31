@@ -342,3 +342,49 @@ html {
     transform: scale(1);
   }
 }
+
+/* Custom Sleek Date Picker & Select Dropdown Inputs */
+input[type="date"],
+select {
+  position: relative;
+  cursor: pointer;
+  background-color: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 14px !important;
+  padding: 0 18px !important;
+  height: 52px !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #0F172A !important;
+  transition: all 0.25s ease !important;
+  outline: none !important;
+  color-scheme: light !important;
+}
+
+input[type="date"]:hover,
+select:hover {
+  border-color: var(--color-accent-1, #004d43) !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(0, 77, 67, 0.08) !important;
+}
+
+input[type="date"]:focus,
+select:focus {
+  border-color: var(--color-accent-1, #004d43) !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 0 0 3px rgba(0, 77, 67, 0.12) !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+  filter: invert(24%) sepia(85%) saturate(850%) hue-rotate(130deg) brightness(90%) contrast(100%);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  padding: 4px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
