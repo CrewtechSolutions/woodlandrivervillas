@@ -15,6 +15,25 @@ const getTomorrowString = (dateStr: string) => {
   return d.toISOString().split('T')[0];
 };
 
+const isExtraPersonAddon = (name: string): boolean => {
+  const n = (name || '').toLowerCase();
+  return n.includes('additional person') || n.includes('extra guest') || n.includes('extra person') || n.includes('additional guest');
+};
+
+const getMaxAllowedGuests = (villaObj: any): number => {
+  if (!villaObj) return 12;
+  if (typeof villaObj.maxGuests === 'number' && villaObj.maxGuests > 0) {
+    return villaObj.maxGuests;
+  }
+  const str = `${villaObj.guests || ''} ${villaObj.subtitle || ''} ${villaObj.maxGuests || ''}`;
+  const match = str.match(/(\d+)\s*(guest|person|adult)/i) || str.match(/(\d+)/);
+  if (match && match[1]) {
+    const parsed = parseInt(match[1], 10);
+    if (parsed > 0 && parsed <= 50) return parsed;
+  }
+  return 12;
+};
+
 export const CheckoutPage: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const location = useLocation();
@@ -27,6 +46,10 @@ export const CheckoutPage: React.FC = () => {
   const [specialNotes, setSpecialNotes] = useState('');
 
   const state = location.state as { startDate: string; endDate: string; villa: Villa; guests?: number; selectedAddons?: { id: string; quantity: number }[] };
+  const maxAllowedGuests = getMaxAllowedGuests(state?.villa);
+  const [currentGuests, setCurrentGuests] = useState<number>(
+    state?.guests ? Math.min(state.guests, maxAllowedGuests) : maxAllowedGuests
+  );
 
   const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1);
   const [currentStartDate, setCurrentStartDate] = useState(state?.startDate || '');
@@ -36,6 +59,16 @@ export const CheckoutPage: React.FC = () => {
   const [paymentMode, setPaymentMode] = useState<'FULL' | 'ADVANCE'>('FULL');
 
   const [dynamicAddons, setDynamicAddons] = useState<any[]>(state?.villa?.addons || []);
+
+  const handleGuestChange = (newGuests: number) => {
+    setCurrentGuests(newGuests);
+    if (newGuests < maxAllowedGuests) {
+      setSelectedAddons(prev => prev.filter(a => {
+        const addonObj = dynamicAddons?.find((ad: any) => ad.id === a.id);
+        return addonObj ? !isExtraPersonAddon(addonObj.name) : true;
+      }));
+    }
+  };
 
   useEffect(() => {
     if (!state?.villa) return;
@@ -80,6 +113,7 @@ export const CheckoutPage: React.FC = () => {
             offeringId: state.villa.offeringId || state.villa.id,
             startDate: startDateTime,
             endDate: endDateTime,
+            guests: currentGuests,
             selectedAddons
           }).catch((err) => {
             throw new Error(err.message || 'Failed to calculate pricing');
@@ -87,7 +121,8 @@ export const CheckoutPage: React.FC = () => {
           coreApiService.checkAvailability({
             offeringId: state.villa.offeringId || state.villa.id,
             startDate: startDateTime,
-            endDate: endDateTime
+            endDate: endDateTime,
+            guests: currentGuests
           }).catch((err) => {
             console.error("Availability error:", err);
             return { data: { available: true } };
@@ -114,7 +149,7 @@ export const CheckoutPage: React.FC = () => {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [state, currentStartDate, currentEndDate, selectedAddons]);
+  }, [state, currentStartDate, currentEndDate, currentGuests, selectedAddons]);
 
   if (authLoading) {
     return (
@@ -132,7 +167,7 @@ export const CheckoutPage: React.FC = () => {
     return <Navigate to="/catalogue" replace />;
   }
 
-  const { villa, guests = 1 } = state;
+  const { villa } = state;
 
   const handlePayment = async () => {
     setProcessing(true);
@@ -148,7 +183,7 @@ export const CheckoutPage: React.FC = () => {
         offeringId: state.villa.offeringId || state.villa.id,
         startDate: startDateTime,
         endDate: endDateTime,
-        notes: `Guests: ${guests}. Special Notes: ${specialNotes}`,
+        notes: `Guests: ${currentGuests}. Special Notes: ${specialNotes}`,
         selectedAddons
       });
 
@@ -214,7 +249,7 @@ export const CheckoutPage: React.FC = () => {
         offeringId: state.villa.offeringId || state.villa.id,
         startDate: startDateTime,
         endDate: endDateTime,
-        notes: `Guests: ${guests}. Special Notes: ${specialNotes}`,
+        notes: `Guests: ${currentGuests}. Special Notes: ${specialNotes}`,
         selectedAddons
       });
 
@@ -249,15 +284,62 @@ export const CheckoutPage: React.FC = () => {
   };
 
   const handleAddonChange = (addonId: string, quantity: number) => {
+    const targetAddon = dynamicAddons.find((a: any) => a.id === addonId);
+    const nameLower = targetAddon?.name?.toLowerCase() || '';
+    const isVeg = nameLower.includes('veg') && !nameLower.includes('non');
+    const isNonVeg = nameLower.includes('non-veg') || nameLower.includes('non veg');
+    const isExtraPerson = isExtraPersonAddon(targetAddon?.name || '');
+
     setSelectedAddons(prev => {
-      const existing = prev.find(a => a.id === addonId);
-      if (quantity <= 0) {
-        return prev.filter(a => a.id !== addonId);
+      let next = [...prev];
+      const existingIdx = next.findIndex(a => a.id === addonId);
+
+      // Determine extra persons count
+      let currentExtraPersons = 0;
+      const extraAddonObj = dynamicAddons.find((a: any) => isExtraPersonAddon(a.name));
+      if (extraAddonObj) {
+        if (isExtraPerson) {
+          currentExtraPersons = quantity;
+        } else {
+          const found = next.find(a => a.id === extraAddonObj.id);
+          currentExtraPersons = found ? found.quantity : 0;
+        }
       }
-      if (existing) {
-        return prev.map(a => a.id === addonId ? { ...a, quantity } : a);
+
+      const totalAllowedMeals = currentGuests + currentExtraPersons;
+
+      if (isVeg || isNonVeg) {
+        const counterpartAddon = dynamicAddons.find((a: any) => {
+          const n = a.name?.toLowerCase() || '';
+          if (isVeg) return n.includes('non-veg') || n.includes('non veg');
+          return n.includes('veg') && !n.includes('non');
+        });
+
+        const counterpartQty = counterpartAddon
+          ? (next.find(a => a.id === counterpartAddon.id)?.quantity || 0)
+          : 0;
+
+        const maxForThis = Math.max(0, totalAllowedMeals - counterpartQty);
+        const cappedQty = Math.min(quantity, maxForThis);
+
+        if (cappedQty <= 0) {
+          next = next.filter(a => a.id !== addonId);
+        } else if (existingIdx >= 0) {
+          next[existingIdx] = { ...next[existingIdx], quantity: cappedQty };
+        } else {
+          next.push({ id: addonId, quantity: cappedQty });
+        }
+      } else {
+        if (quantity <= 0) {
+          next = next.filter(a => a.id !== addonId);
+        } else if (existingIdx >= 0) {
+          next[existingIdx] = { ...next[existingIdx], quantity };
+        } else {
+          next.push({ id: addonId, quantity });
+        }
       }
-      return [...prev, { id: addonId, quantity }];
+
+      return next;
     });
   };
 
@@ -323,13 +405,13 @@ export const CheckoutPage: React.FC = () => {
                 </div>
               )}
 
-              <div className="max-w-800 mx-auto">
+              <div style={{ maxWidth: '780px', margin: '0 auto' }}>
                 
                 {/* 3-STEP INTERACTIVE CHECKOUT WIZARD */}
                 <div>
                   
                   {/* ELEGANT STEP WIZARD BAR */}
-                  <div className="checkout-wizard-bar mb-32">
+                  <div className="checkout-wizard-bar mb-24">
                     <button 
                       onClick={() => setActiveStep(1)}
                       className={`checkout-wizard-tab ${activeStep === 1 ? 'active' : activeStep > 1 ? 'completed' : 'pending'}`}
@@ -366,19 +448,19 @@ export const CheckoutPage: React.FC = () => {
                   {/* STEP 1: STAY OVERVIEW */}
                   {activeStep === 1 && (
                     <div className="animate-fadeIn">
-                      <div className="mb-24">
-                        <div className="text-11 uppercase text-accent-1 font-bold tracking-widest mb-6">STEP 1 OF 3</div>
-                        <h2 className="text-28 font-serif font-bold text-dark-1 border-bottom-light pb-16">Review Reservation Details</h2>
+                      <div className="mb-16">
+                        <div className="text-11 uppercase text-accent-1 font-bold tracking-widest mb-4" style={{ fontFamily: "'Jost', sans-serif" }}>STEP 1 OF 3</div>
+                        <h2 className="text-22 font-bold text-dark-1 border-bottom-light pb-12" style={{ fontFamily: "'Jost', sans-serif" }}>Review Reservation Details</h2>
                       </div>
 
                       <div 
-                        className="checkout-card mb-32"
+                        className="checkout-card mb-20"
                         style={{ overflow: 'visible', position: 'relative', zIndex: calendarMode ? 100 : 1 }}
                       >
-                        <div className="d-flex items-center mb-25 border-bottom-light pb-25">
+                        <div className="d-flex items-center mb-16 border-bottom-light pb-16">
                           <div 
-                            className="rounded-16 overflow-hidden shadow-sm mr-20 bg-light-1"
-                            style={{ width: '90px', height: '90px', flexShrink: 0 }}
+                            className="rounded-14 overflow-hidden shadow-sm mr-16 bg-light-1"
+                            style={{ width: '72px', height: '72px', flexShrink: 0 }}
                           >
                             <img 
                               src={villa.heroImage} 
@@ -387,11 +469,11 @@ export const CheckoutPage: React.FC = () => {
                             />
                           </div>
                           <div>
-                            <div className="text-11 uppercase tracking-widest text-accent-1 font-bold mb-4">
+                            <div className="text-11 uppercase tracking-widest text-accent-1 font-bold mb-2" style={{ fontFamily: "'Jost', sans-serif" }}>
                               <i className="icon-star text-10 mr-4 text-amber-500"></i> LUXURY ESTATE
                             </div>
-                            <h3 className="text-24 font-serif font-bold text-dark-1 mb-6 leading-snug">{villa.name}</h3>
-                            <p className="text-13 text-sec font-medium">{villa.subtitle || 'Zirad, Alibaug • Private Pool Estate'}</p>
+                            <h3 className="text-20 font-bold text-dark-1 mb-4 leading-snug" style={{ fontFamily: "'Jost', sans-serif" }}>{villa.name}</h3>
+                            <p className="text-13 text-sec font-medium" style={{ fontFamily: "'Jost', sans-serif" }}>{villa.subtitle || 'Zirad, Alibaug • Private Pool Estate'}</p>
                           </div>
                         </div>
                         
@@ -402,16 +484,16 @@ export const CheckoutPage: React.FC = () => {
                               onClick={() => setCalendarMode(calendarMode === 'checkIn' ? null : 'checkIn')}
                               className="checkout-date-box h-full relative"
                             >
-                              <div className="d-flex justify-between items-center mb-10">
-                                <span className="text-11 uppercase tracking-wider text-accent-1 font-bold d-flex items-center">
+                              <div className="d-flex justify-between items-center mb-8">
+                                <span className="text-11 uppercase tracking-wider text-accent-1 font-bold d-flex items-center" style={{ fontFamily: "'Jost', sans-serif" }}>
                                   <i className="icon-calendar-2 mr-6 text-accent-1 text-14"></i> CHECK-IN DATE
                                 </span>
-                                <span className="px-10 py-3 rounded-200 bg-white text-10 font-bold text-accent-1 border-1 border-light-2 shadow-sm">CHANGE</span>
+                                <span className="px-8 py-2 rounded-200 bg-white text-10 font-bold text-accent-1 border-1 border-light-2 shadow-2xs" style={{ fontFamily: "'Jost', sans-serif" }}>CHANGE</span>
                               </div>
-                              <div className="text-16 font-bold text-dark-1 mb-4">
+                              <div className="text-15 font-bold text-dark-1 mb-2" style={{ fontFamily: "'Jost', sans-serif" }}>
                                 {currentStartDate ? new Date(currentStartDate).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) : 'Select Date'}
                               </div>
-                              <div className="text-12 text-sec font-medium">Check-in: From 2:00 PM</div>
+                              <div className="text-12 text-sec font-medium" style={{ fontFamily: "'Jost', sans-serif" }}>Check-in: From 2:00 PM</div>
                             </div>
 
                             {calendarMode === 'checkIn' && (
@@ -438,16 +520,16 @@ export const CheckoutPage: React.FC = () => {
                               onClick={() => setCalendarMode(calendarMode === 'checkOut' ? null : 'checkOut')}
                               className="checkout-date-box h-full relative"
                             >
-                              <div className="d-flex justify-between items-center mb-10">
-                                <span className="text-11 uppercase tracking-wider text-accent-1 font-bold d-flex items-center">
+                              <div className="d-flex justify-between items-center mb-8">
+                                <span className="text-11 uppercase tracking-wider text-accent-1 font-bold d-flex items-center" style={{ fontFamily: "'Jost', sans-serif" }}>
                                   <i className="icon-calendar-2 mr-6 text-accent-1 text-14"></i> CHECK-OUT DATE
                                 </span>
-                                <span className="px-10 py-3 rounded-200 bg-white text-10 font-bold text-accent-1 border-1 border-light-2 shadow-sm">CHANGE</span>
+                                <span className="px-8 py-2 rounded-200 bg-white text-10 font-bold text-accent-1 border-1 border-light-2 shadow-2xs" style={{ fontFamily: "'Jost', sans-serif" }}>CHANGE</span>
                               </div>
-                              <div className="text-16 font-bold text-dark-1 mb-4">
+                              <div className="text-15 font-bold text-dark-1 mb-2" style={{ fontFamily: "'Jost', sans-serif" }}>
                                 {currentEndDate ? new Date(currentEndDate).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) : 'Select Date'}
                               </div>
-                              <div className="text-12 text-sec font-medium">Check-out: By 11:00 AM</div>
+                              <div className="text-12 text-sec font-medium" style={{ fontFamily: "'Jost', sans-serif" }}>Check-out: By 11:00 AM</div>
                             </div>
 
                             {calendarMode === 'checkOut' && (
@@ -464,16 +546,30 @@ export const CheckoutPage: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="mt-25 pt-20 border-top-light d-flex justify-between items-center flex-wrap y-gap-10">
-                          <div>
-                            <div className="text-11 uppercase tracking-wider text-sec font-bold mb-4 d-flex items-center">
-                              <i className="icon-guest mr-6 text-accent-1"></i> GUESTS & CAPACITY
+                        <div className="mt-20 pt-16 border-top-light bg-slate-50 p-16 rounded-16 border-1 border-slate-200/80 d-flex justify-between items-center flex-wrap gap-12">
+                          <div className="d-flex items-center flex-wrap gap-12">
+                            <div>
+                              <div className="text-11 uppercase tracking-wider text-sec font-bold mb-4 d-flex items-center" style={{ fontFamily: "'Jost', sans-serif" }}>
+                                <i className="icon-guest mr-6 text-accent-1"></i> GUESTS & CAPACITY
+                              </div>
+                              <select 
+                                className="bg-white border-1 border-slate-300 focus:border-accent-1 text-dark-1 outline-none transition-all cursor-pointer font-bold px-12 py-6 rounded-10 text-13 shadow-2xs"
+                                style={{ fontFamily: "'Jost', sans-serif", color: '#0f172a' }}
+                                value={currentGuests > maxAllowedGuests ? maxAllowedGuests : currentGuests}
+                                onChange={(e) => handleGuestChange(Number(e.target.value))}
+                              >
+                                {[...Array(maxAllowedGuests)].map((_, i) => (
+                                  <option key={i+1} value={i+1}>{i+1} Guest{i > 0 ? 's' : ''}</option>
+                                ))}
+                              </select>
                             </div>
-                            <div className="text-15 font-bold text-dark-1">{guests} Guest{guests > 1 ? 's' : ''} • {villa.bedrooms} BHK ({villa.bathrooms} Baths)</div>
+                            <span className="text-12 text-slate-500 font-semibold" style={{ fontFamily: "'Jost', sans-serif" }}>
+                              • {villa.bedrooms} BHK ({villa.bathrooms} Baths)
+                            </span>
                           </div>
                           <div className="text-right">
-                            <div className="text-11 uppercase tracking-wider text-accent-1 font-bold mb-4">ESTIMATED STAY</div>
-                            <div className="text-22 font-serif font-bold text-accent-1">
+                            <div className="text-11 uppercase tracking-wider text-accent-1 font-bold mb-2" style={{ fontFamily: "'Jost', sans-serif" }}>ESTIMATED STAY</div>
+                            <div className="text-20 font-bold text-accent-1" style={{ fontFamily: "'Jost', sans-serif" }}>
                               ₹{(totalPrice / 100).toLocaleString('en-IN')}
                             </div>
                           </div>
@@ -494,23 +590,30 @@ export const CheckoutPage: React.FC = () => {
                   {/* STEP 2: EXPERIENCE ADD-ONS */}
                   {activeStep === 2 && (
                     <div className="animate-fadeIn">
-                      <div className="mb-24">
-                        <div className="text-11 uppercase text-accent-1 font-bold tracking-widest mb-6">STEP 2 OF 3</div>
-                        <h2 className="text-28 font-serif font-bold text-dark-1 border-bottom-light pb-16 mb-12">Customize In-House Experiences</h2>
-                        <p className="text-14 text-sec font-medium">Enhance your villa stay with curated chef services, BBQ setups, or luxury SUV transfers.</p>
+                      <div className="mb-16">
+                        <div className="text-11 uppercase text-accent-1 font-bold tracking-widest mb-4" style={{ fontFamily: "'Jost', sans-serif" }}>STEP 2 OF 3</div>
+                        <h2 className="text-22 font-bold text-dark-1 border-bottom-light pb-12 mb-8" style={{ fontFamily: "'Jost', sans-serif" }}>Customize In-House Experiences</h2>
+                        <p className="text-13 text-sec font-medium" style={{ fontFamily: "'Jost', sans-serif" }}>Enhance your villa stay with curated chef services, BBQ setups, or extra guest packages.</p>
                       </div>
                       
-                      <div className="mb-32">
+                      <div className="mb-20">
                         {dynamicAddons.length > 0 ? (
-                          dynamicAddons.map(addon => {
+                          dynamicAddons
+                            .filter((addon: any) => {
+                              if (isExtraPersonAddon(addon.name) && currentGuests < maxAllowedGuests) {
+                                return false;
+                              }
+                              return true;
+                            })
+                            .map(addon => {
                             const selected = selectedAddons.find(a => a.id === addon.id);
                             const quantity = selected ? selected.quantity : 0;
                             return (
                               <div key={addon.id} className="addon-card">
                                 <div>
-                                  <div className="text-17 font-serif font-bold text-dark-1 mb-4">{addon.name}</div>
-                                  {addon.description && <div className="text-13 text-sec mb-8 leading-relaxed font-normal">{addon.description}</div>}
-                                  <div className="text-15 font-bold text-accent-1">
+                                  <div className="text-15 font-bold text-dark-1 mb-2" style={{ fontFamily: "'Jost', sans-serif" }}>{addon.name}</div>
+                                  {addon.description && <div className="text-12 text-sec mb-6 leading-relaxed font-normal" style={{ fontFamily: "'Jost', sans-serif" }}>{addon.description}</div>}
+                                  <div className="text-14 font-bold text-accent-1" style={{ fontFamily: "'Jost', sans-serif" }}>
                                     ₹{(addon.priceCents / 100).toLocaleString('en-IN')} {addon.priceType === 'PER_DURATION' ? '/ day' : (addon.priceType === 'PER_UNIT' ? '/ unit' : '')}
                                   </div>
                                 </div>
@@ -534,9 +637,9 @@ export const CheckoutPage: React.FC = () => {
                                     </div>
                                   ) : (
                                     <button
-                                      className={`px-24 py-12 rounded-200 text-12 font-bold uppercase tracking-wider transition-all ${
+                                      className={`px-20 py-8 rounded-200 text-11 font-bold uppercase tracking-wider transition-all ${
                                         quantity > 0 
-                                          ? 'bg-accent-1 text-white shadow-md' 
+                                          ? 'bg-accent-1 text-white shadow-xs' 
                                           : 'bg-light-1 text-dark-1 border-1 border-light-2 hover:bg-light-2'
                                       }`}
                                       onClick={() => handleAddonChange(addon.id, quantity > 0 ? 0 : 1)}
@@ -549,10 +652,10 @@ export const CheckoutPage: React.FC = () => {
                             );
                           })
                         ) : (
-                          <div className="p-30 bg-white rounded-20 border-1 border-light-2 text-center">
-                            <i className="icon-info text-24 text-accent-1 mb-8"></i>
-                            <div className="text-15 font-bold text-dark-1 mb-4">No Extra Add-On Offerings</div>
-                            <div className="text-13 text-sec font-medium">No additional add-on offerings are configured for this villa. Click below to continue.</div>
+                          <div className="p-24 bg-white rounded-16 border-1 border-light-2 text-center">
+                            <i className="icon-info text-20 text-accent-1 mb-6"></i>
+                            <div className="text-14 font-bold text-dark-1 mb-2">No Extra Add-On Offerings</div>
+                            <div className="text-12 text-sec font-medium">No additional add-on offerings are configured for this villa. Click below to continue.</div>
                           </div>
                         )}
                       </div>
@@ -577,49 +680,66 @@ export const CheckoutPage: React.FC = () => {
                   {/* STEP 3: PRICE SUMMARY, GUEST DETAILS & PAYMENT */}
                   {activeStep === 3 && (
                     <div className="animate-fadeIn">
-                      <div className="mb-24">
-                        <div className="text-11 uppercase text-accent-1 font-bold tracking-widest mb-6">STEP 3 OF 3</div>
-                        <h2 className="text-28 font-serif font-bold text-dark-1 border-bottom-light pb-16 mb-12">Review Price Summary & Complete Reservation</h2>
-                        <p className="text-14 text-sec font-medium">Verify your stay breakdown, choose payment plan, and confirm your booking.</p>
+                      <div className="mb-16">
+                        <div className="text-11 uppercase text-accent-1 font-bold tracking-widest mb-4" style={{ fontFamily: "'Jost', sans-serif" }}>STEP 3 OF 3</div>
+                        <h2 className="text-22 font-bold text-dark-1 border-bottom-light pb-12 mb-8" style={{ fontFamily: "'Jost', sans-serif" }}>Review Price Summary & Complete Reservation</h2>
+                        <p className="text-13 text-sec font-medium" style={{ fontFamily: "'Jost', sans-serif" }}>Verify your stay breakdown, choose payment plan, and confirm your booking.</p>
                       </div>
                       
                       {/* INTEGRATED PRICE BREAKDOWN CARD */}
-                      <div className="checkout-card mb-32">
-                        <div className="text-11 uppercase text-amber-600 font-bold tracking-widest mb-6">FINAL TARIFF BREAKDOWN</div>
-                        <h3 className="text-24 font-serif font-bold mb-20 text-dark-1 border-bottom-light pb-14">Price Summary</h3>
+                      <div className="checkout-card mb-20 p-24 bg-white rounded-20 shadow-sm" style={{ border: '1px solid #e2e8f0' }}>
+                        <div className="d-flex justify-between items-center mb-16 pb-14 border-bottom-light">
+                          <div>
+                            <span className="text-11 uppercase text-accent-1 font-bold tracking-widest d-block mb-4" style={{ fontFamily: "'Jost', sans-serif" }}>
+                              FINAL TARIFF BREAKDOWN
+                            </span>
+                            <h3 className="text-24 font-bold text-dark-1 m-0" style={{ fontFamily: "'Jost', sans-serif" }}>
+                              Price Summary
+                            </h3>
+                          </div>
+                          <div className="d-inline-flex items-center px-14 py-6 rounded-100 bg-emerald-50 text-emerald-900 border-1 border-emerald-300/80 text-11 font-bold tracking-wider uppercase shadow-2xs" style={{ fontFamily: "'Jost', sans-serif" }}>
+                            <span className="size-16 rounded-full bg-emerald-600 text-white d-inline-flex items-center justify-center text-10 font-bold mr-6">
+                              ✓
+                            </span>
+                            ESTIMATE VERIFIED
+                          </div>
+                        </div>
                         
                         {loading ? (
                           <div className="py-40 text-center">
                             <div className="size-36 rounded-full border-3 border-accent-1 border-t-transparent animate-spin mx-auto mb-12"></div>
-                            <div className="text-12 font-bold text-sec uppercase tracking-wider">Calculating Total Stay Package...</div>
+                            <div className="text-12 font-bold text-sec uppercase tracking-wider" style={{ fontFamily: "'Jost', sans-serif" }}>Calculating Total Stay Package...</div>
                           </div>
                         ) : pricing ? (
-                          <div className="p-24 bg-light-1 rounded-20 border-1 border-light-2 mb-28" style={{ backgroundColor: '#F8FAFC' }}>
+                          <div className="p-20 bg-slate-50/70 rounded-20 border-1 border-slate-200/80 mb-28">
                             {/* BASE VILLA RENTAL */}
-                            <div className="d-flex justify-between items-center text-15 text-dark-1 font-medium pb-14 mb-14 border-bottom-light">
+                            <div className="d-flex justify-between items-start py-12 border-bottom-light">
                               <div>
-                                <span className="font-bold text-dark-1">Base Villa Rental</span>
-                                <div className="text-12 text-sec mt-2 font-normal">
+                                <span className="font-bold text-dark-1 text-15 d-block" style={{ fontFamily: "'Jost', sans-serif" }}>
+                                  Base Villa Rental
+                                </span>
+                                <span className="text-13 text-sec mt-2 font-normal d-block" style={{ fontFamily: "'Jost', sans-serif" }}>
                                   {nightsCount} Night{nightsCount > 1 ? 's' : ''} Stay Package (Incl. all stay fees & taxes)
-                                </div>
+                                </span>
                               </div>
-                              <span className="font-serif font-bold text-18 text-dark-1 ml-15">
+                              <span className="font-bold text-17 text-dark-1 ml-20" style={{ fontFamily: "'Jost', sans-serif" }}>
                                 ₹{(effectiveBaseFare / 100).toLocaleString('en-IN')}
                               </span>
                             </div>
 
                             {/* DETAILED SELECTED ADD-ONS BREAKDOWN */}
                             {selectedAddons.length > 0 && (
-                              <div className="pb-14 mb-14 border-bottom-light">
-                                <div className="d-flex justify-between items-center mb-10">
-                                  <span className="text-12 uppercase tracking-wider text-accent-1 font-bold">
-                                    Selected In-House Add-Ons ({selectedAddons.length})
+                              <div className="py-16 border-bottom-light">
+                                <div className="d-flex justify-between items-center mb-12">
+                                  <span className="text-12 uppercase tracking-wider text-accent-1 font-bold" style={{ fontFamily: "'Jost', sans-serif" }}>
+                                    SELECTED IN-HOUSE ADD-ONS ({selectedAddons.length})
                                   </span>
-                                  <span className="text-13 font-bold text-dark-1">
+                                  <span className="text-15 font-bold text-dark-1" style={{ fontFamily: "'Jost', sans-serif" }}>
                                     ₹{(addonsPrice / 100).toLocaleString('en-IN')}
                                   </span>
                                 </div>
-                                <div className="space-y-8 pl-12 border-l-2 border-accent-1/30 my-8">
+
+                                <div className="space-y-12 pl-16 my-8" style={{ borderLeft: '3px solid #004d43' }}>
                                   {selectedAddons.map(selectedItem => {
                                     const addonObj = dynamicAddons.find(a => a.id === selectedItem.id);
                                     if (!addonObj) return null;
@@ -628,14 +748,16 @@ export const CheckoutPage: React.FC = () => {
                                       ? addonObj.priceCents * selectedItem.quantity * nightsCount 
                                       : addonObj.priceCents * selectedItem.quantity;
                                     return (
-                                      <div key={selectedItem.id} className="d-flex justify-between items-start text-14 text-dark-1 font-medium py-4">
+                                      <div key={selectedItem.id} className="d-flex justify-between items-start py-2">
                                         <div>
-                                          <span className="font-bold text-dark-1">{addonObj.name}</span>
-                                          <div className="text-12 text-sec font-normal mt-1">
+                                          <span className="font-semibold text-dark-1 text-14 d-block" style={{ fontFamily: "'Jost', sans-serif" }}>
+                                            {addonObj.name}
+                                          </span>
+                                          <span className="text-12 text-sec font-normal d-block mt-2" style={{ fontFamily: "'Jost', sans-serif" }}>
                                             Qty: {selectedItem.quantity} × ₹{(addonObj.priceCents / 100).toLocaleString('en-IN')}{isPerDay ? ` × ${nightsCount} night${nightsCount > 1 ? 's' : ''}` : ''}
-                                          </div>
+                                          </span>
                                         </div>
-                                        <span className="font-serif font-bold text-16 text-dark-1 ml-15">
+                                        <span className="font-bold text-15 text-dark-1 ml-20" style={{ fontFamily: "'Jost', sans-serif" }}>
                                           ₹{(itemTotalCents / 100).toLocaleString('en-IN')}
                                         </span>
                                       </div>
@@ -646,14 +768,16 @@ export const CheckoutPage: React.FC = () => {
                             )}
 
                             {/* REFUNDABLE DEPOSIT */}
-                            <div className="d-flex justify-between items-center text-15 text-dark-1 font-medium pt-2">
+                            <div className="d-flex justify-between items-start pt-12">
                               <div>
-                                <span className="font-bold text-dark-1 d-flex items-center">
-                                  Refundable Security Deposit <i className="icon-info text-12 ml-6 text-sec" title="Fully refunded upon checkout inspection"></i>
+                                <span className="font-bold text-dark-1 text-15 d-block" style={{ fontFamily: "'Jost', sans-serif" }}>
+                                  Refundable Security Deposit
                                 </span>
-                                <div className="text-12 text-sec mt-2 font-normal">100% refunded upon peaceful checkout inspection</div>
+                                <span className="text-13 text-emerald-700 font-semibold mt-2 d-block" style={{ fontFamily: "'Jost', sans-serif" }}>
+                                  100% refunded upon peaceful checkout inspection
+                                </span>
                               </div>
-                              <span className="font-serif font-bold text-18 text-dark-1 ml-15">
+                              <span className="font-bold text-17 text-dark-1 ml-20" style={{ fontFamily: "'Jost', sans-serif" }}>
                                 ₹{(depositPrice / 100).toLocaleString('en-IN')}
                               </span>
                             </div>
@@ -665,8 +789,8 @@ export const CheckoutPage: React.FC = () => {
                         )}
 
                         {/* PAYMENT SCHEDULE SELECTOR CARDS */}
-                        <div className="mb-28">
-                          <h4 className="text-12 uppercase tracking-wider font-bold text-dark-1 mb-14">Select Payment Option</h4>
+                        <div className="mt-32 mb-28">
+                          <h4 className="text-12 uppercase tracking-wider font-bold text-dark-1 mb-16" style={{ fontFamily: "'Jost', sans-serif" }}>SELECT PAYMENT OPTION</h4>
                           <div className="row y-gap-16">
                             <div className="col-sm-6">
                               <div 
@@ -674,7 +798,7 @@ export const CheckoutPage: React.FC = () => {
                                 className={`payment-plan-card ${paymentMode === 'FULL' ? 'selected' : ''}`}
                               >
                                 <div className="payment-plan-header">
-                                  <span className="payment-plan-badge">100% Full Payment</span>
+                                  <span className="payment-plan-badge">100% FULL PAYMENT</span>
                                   <div className="size-20 rounded-full border-2 border-accent-1 d-flex items-center justify-center">
                                     {paymentMode === 'FULL' && <div className="size-10 rounded-full bg-accent-1"></div>}
                                   </div>
@@ -683,7 +807,7 @@ export const CheckoutPage: React.FC = () => {
                                   <div className="payment-plan-amount">
                                     ₹{totalRupees.toLocaleString('en-IN')}
                                   </div>
-                                  <div className="text-12 text-sec mt-4 font-medium">
+                                  <div className="text-13 text-sec mt-6 font-normal" style={{ fontFamily: "'Jost', sans-serif" }}>
                                     Pay full amount now for instant booking confirmation.
                                   </div>
                                 </div>
@@ -696,7 +820,7 @@ export const CheckoutPage: React.FC = () => {
                                 className={`payment-plan-card ${paymentMode === 'ADVANCE' ? 'selected' : ''}`}
                               >
                                 <div className="payment-plan-header">
-                                  <span className="payment-plan-badge">50% Advance Plan</span>
+                                  <span className="payment-plan-badge">50% ADVANCE PLAN</span>
                                   <div className="size-20 rounded-full border-2 border-accent-1 d-flex items-center justify-center">
                                     {paymentMode === 'ADVANCE' && <div className="size-10 rounded-full bg-accent-1"></div>}
                                   </div>
@@ -705,7 +829,7 @@ export const CheckoutPage: React.FC = () => {
                                   <div className="payment-plan-amount">
                                     ₹{advanceTotalRupees.toLocaleString('en-IN')}
                                   </div>
-                                  <div className="text-12 text-sec mt-4 font-medium">
+                                  <div className="text-13 text-sec mt-6 font-normal" style={{ fontFamily: "'Jost', sans-serif" }}>
                                     Pay 50% advance (₹{advanceStayRupees.toLocaleString('en-IN')} + ₹{depositRupees.toLocaleString('en-IN')} deposit), pay balance at check-in.
                                   </div>
                                 </div>
@@ -714,56 +838,64 @@ export const CheckoutPage: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* TOTAL PAYABLE AMOUNT CARD */}
-                        <div className="d-flex justify-between items-center p-24 bg-accent-1/5 rounded-20 border-1 border-accent-1/20">
+                        {/* TOTAL PAYABLE AMOUNT BANNER */}
+                        <div className="d-flex justify-between items-center p-16 bg-emerald-50/80 rounded-16 border-1 border-emerald-200/90 shadow-2xs mt-16">
                           <div>
-                            <span className="text-11 uppercase tracking-widest font-bold text-accent-1 d-block mb-4">Payable Now</span>
-                            <span className="text-13 text-sec font-medium">
+                            <span className="text-11 uppercase tracking-widest font-bold text-emerald-900 d-block mb-2" style={{ fontFamily: "'Jost', sans-serif" }}>PAYABLE NOW</span>
+                            <span className="text-12 text-emerald-800 font-medium" style={{ fontFamily: "'Jost', sans-serif" }}>
                               {paymentMode === 'ADVANCE' ? `Balance ₹${advanceStayRupees.toLocaleString('en-IN')} payable upon check-in` : 'Includes 100% full stay package & deposit'}
                             </span>
                           </div>
-                          <span className="text-36 font-serif font-bold text-accent-1 leading-none">
+                          <span className="text-26 font-bold text-emerald-950 leading-none ml-16" style={{ fontFamily: "'Jost', sans-serif" }}>
                             ₹{payableNowRupees.toLocaleString('en-IN')}
                           </span>
                         </div>
                       </div>
 
                       {/* PRIMARY GUEST DETAILS CARD */}
-                      <div className="checkout-card mb-32">
-                        <h3 className="text-20 font-serif font-bold text-dark-1 mb-20 border-bottom-light pb-12">Primary Guest Information</h3>
-                        <div className="row y-gap-20 mb-20">
+                      <div className="checkout-card mb-20 p-24 bg-white border-1 border-light-2 rounded-20 shadow-sm">
+                        <h3 className="text-18 font-bold text-dark-1 mb-16 border-bottom-light pb-10" style={{ fontFamily: "'Jost', sans-serif" }}>Primary Guest Information</h3>
+                        <div className="row y-gap-16 mb-16">
                           <div className="col-sm-6">
-                            <div className="text-11 uppercase tracking-wider text-sec font-bold mb-8">FULL NAME</div>
-                            <div className="text-15 font-bold text-dark-1 p-16 bg-light-1 rounded-14 border-1 border-light-2" style={{ backgroundColor: '#F8FAFC' }}>
-                              {user.name || user.email.split('@')[0]}
-                            </div>
+                            <label className="text-11 uppercase tracking-wider text-sec font-bold mb-6 d-block" style={{ fontFamily: "'Jost', sans-serif" }}>FULL NAME</label>
+                            <input
+                              type="text"
+                              readOnly
+                              value={user.name || user.email.split('@')[0]}
+                              className="w-1/1 bg-white text-dark-1 font-bold px-14 py-10 rounded-12 border-1 border-light-2 outline-none"
+                              style={{ fontFamily: "'Jost', sans-serif", fontSize: '13px', color: '#0f172a' }}
+                            />
                           </div>
 
                           <div className="col-sm-6">
-                            <div className="text-11 uppercase tracking-wider text-sec font-bold mb-8">EMAIL ADDRESS</div>
-                            <div className="text-15 font-bold text-dark-1 p-16 bg-light-1 rounded-14 border-1 border-light-2" style={{ backgroundColor: '#F8FAFC' }}>
-                              {user.email}
-                            </div>
+                            <label className="text-11 uppercase tracking-wider text-sec font-bold mb-6 d-block" style={{ fontFamily: "'Jost', sans-serif" }}>EMAIL ADDRESS</label>
+                            <input
+                              type="text"
+                              readOnly
+                              value={user.email}
+                              className="w-1/1 bg-white text-dark-1 font-bold px-14 py-10 rounded-12 border-1 border-light-2 outline-none"
+                              style={{ fontFamily: "'Jost', sans-serif", fontSize: '13px', color: '#0f172a' }}
+                            />
                           </div>
                         </div>
 
                         <div>
-                          <label className="text-11 uppercase tracking-wider text-sec font-bold mb-8 d-block">
+                          <label className="text-11 uppercase tracking-wider text-sec font-bold mb-6 d-block" style={{ fontFamily: "'Jost', sans-serif" }}>
                             SPECIAL REQUESTS & PREFERENCES (OPTIONAL)
                           </label>
                           <textarea
-                            rows={3}
-                            placeholder="Mention any dietary requirements, arrival time updates, or celebration setups..."
+                            rows={2}
+                            placeholder="Mention dietary requirements, arrival time updates, or celebration setups..."
                             value={specialNotes}
                             onChange={(e) => setSpecialNotes(e.target.value)}
-                            className="w-1/1 bg-light-1 text-dark-1 border-1 border-light-2 focus:border-accent-1 p-16 rounded-14 text-14 leading-relaxed outline-none"
-                            style={{ backgroundColor: '#F8FAFC' }}
+                            className="w-1/1 bg-white text-dark-1 font-medium p-12 rounded-12 border-1 border-light-2 focus:border-accent-1 text-13 leading-relaxed outline-none transition-all"
+                            style={{ fontFamily: "'Jost', sans-serif", fontSize: '13px', color: '#0f172a' }}
                           />
                         </div>
                       </div>
 
                       {/* ACTION BUTTONS */}
-                      <div className="d-flex justify-between items-center pt-16 border-top-light">
+                      <div className="d-flex justify-between items-center pt-24 border-top-light">
                         <button
                           onClick={() => setActiveStep(2)}
                           className="checkout-btn-secondary"
@@ -775,7 +907,7 @@ export const CheckoutPage: React.FC = () => {
                           onClick={handlePayment}
                           disabled={processing || loading}
                           className="checkout-btn-primary"
-                          style={{ minWidth: '220px' }}
+                          style={{ height: '54px', padding: '0 44px', fontSize: '14px', borderRadius: '100px' }}
                         >
                           {processing ? (
                             <>

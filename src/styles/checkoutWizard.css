@@ -4,21 +4,21 @@
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 100px;
-  padding: 8px;
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+  padding: 6px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-family: 'Jost', sans-serif;
 }
 
 .checkout-wizard-tab {
   flex: 1;
-  height: 48px;
-  padding: 0 20px;
+  height: 42px;
+  padding: 0 16px;
   border-radius: 100px;
   font-family: 'Jost', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -26,7 +26,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   cursor: pointer;
@@ -35,7 +35,7 @@
 .checkout-wizard-tab.active {
   background-color: #004d43;
   color: #ffffff;
-  box-shadow: 0 8px 20px -4px rgba(0, 77, 67, 0.35);
+  box-shadow: 0 6px 16px -3px rgba(0, 77, 67, 0.3);
 }
 
 .checkout-wizard-tab.completed {
@@ -55,13 +55,13 @@
 }
 
 .checkout-step-badge {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -84,16 +84,16 @@
 .checkout-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 36px 40px;
-  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05);
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.04);
 }
 
 .checkout-date-box {
   background: #f8fafc;
   border: 1.5px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 22px 24px;
+  border-radius: 16px;
+  padding: 14px 18px;
   cursor: pointer;
   transition: all 0.25s ease;
 }
@@ -101,47 +101,47 @@
 .checkout-date-box:hover {
   border-color: #004d43;
   background: #ffffff;
-  box-shadow: 0 8px 24px rgba(0, 77, 67, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 77, 67, 0.06);
 }
 
 .checkout-btn-primary {
-  height: 52px;
-  padding: 0 36px;
+  height: 46px;
+  padding: 0 28px;
   border-radius: 100px;
   background-color: #004d43;
   color: #ffffff;
   font-family: 'Jost', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  box-shadow: 0 8px 20px -4px rgba(0, 77, 67, 0.35);
+  box-shadow: 0 6px 18px -3px rgba(0, 77, 67, 0.3);
   transition: all 0.3s ease;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .checkout-btn-primary:hover {
   background-color: #0f172a;
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 10px 20px -3px rgba(15, 23, 42, 0.25);
 }
 
 .checkout-btn-secondary {
-  height: 48px;
-  padding: 0 28px;
+  height: 42px;
+  padding: 0 22px;
   border-radius: 100px;
   background-color: transparent;
   color: #0f172a;
   border: 1.5px solid #0f172a;
   font-family: 'Jost', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -158,15 +158,15 @@
 
 .payment-plan-card {
   border: 1.5px solid #e2e8f0;
-  border-radius: 18px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 16px;
   background: #ffffff;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   height: 100%;
 }
 
@@ -178,7 +178,7 @@
 .payment-plan-card.selected {
   border-color: #004d43;
   background: #f0fdf4;
-  box-shadow: 0 8px 24px rgba(0, 77, 67, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 77, 67, 0.1);
 }
 
 .payment-plan-header {
@@ -190,11 +190,11 @@
 
 .payment-plan-badge {
   font-family: 'Jost', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 5px 12px;
+  padding: 4px 10px;
   border-radius: 100px;
 }
 
@@ -209,11 +209,11 @@
 }
 
 .payment-plan-amount {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 28px;
-  font-weight: 600;
+  font-family: 'Jost', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
   color: #0f172a;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .payment-plan-card.selected .payment-plan-amount {
@@ -223,20 +223,20 @@
 .addon-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 24px 28px;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.03);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   transition: all 0.3s ease;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .addon-card:hover {
   border-color: #004d43;
-  box-shadow: 0 8px 24px rgba(0, 77, 67, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 77, 67, 0.06);
 }
 
 .addon-counter-pill {
@@ -251,12 +251,12 @@
 }
 
 .addon-counter-btn {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #0f172a;
   background: transparent;
@@ -274,6 +274,336 @@
   font-size: 14px;
   font-weight: 700;
   color: #004d43;
+}
+
+/* LUXURY FULL-WIDTH BREADCRUMB BAR SYSTEM */
+.luxury-breadcrumb-bar {
+  width: 100%;
+  min-height: 64px;
+  background-color: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.luxury-breadcrumb-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 14px 0;
+}
+
+.luxury-breadcrumb-link {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0f172a !important;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.25s ease;
+  text-decoration: none;
+}
+
+.luxury-breadcrumb-link:hover {
+  color: #004d43 !important;
+}
+
+.luxury-breadcrumb-separator {
+  color: #004d43;
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0 4px;
+}
+
+.luxury-breadcrumb-active {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #004d43;
+  background-color: #e6f4f1;
+  border: 1.5px solid #a7f3d0;
+  padding: 8px 20px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ELEGANT SUB-NAV NAVIGATION BAR */
+.luxury-subnav-bar {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #e2e8f0;
+  border-radius: 100px;
+  padding: 6px 10px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  margin-bottom: 36px;
+}
+
+.luxury-subnav-bar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+  width: 0;
+  height: 0;
+}
+
+.luxury-subnav-btn {
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 100px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.luxury-subnav-btn:hover {
+  color: #004d43;
+  background-color: #f1f5f9;
+}
+
+.luxury-subnav-btn.active {
+  background-color: #004d43;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 77, 67, 0.25);
+}
+
+/* LUXURY CARD SYSTEM FOR VILLA DETAILS */
+.luxury-detail-card {
+  background-color: #ffffff;
+  padding: 36px 40px;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+  margin-bottom: 32px;
+  transition: box-shadow 0.3s ease;
+}
+
+.luxury-detail-card:hover {
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.luxury-highlight-box {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.25s ease;
+}
+
+.luxury-cube-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 8px 4px 12px 4px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.luxury-cube-card {
+  min-width: 108px;
+  width: 108px;
+  height: 108px;
+  background-color: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+}
+
+.luxury-cube-card:hover {
+  background-color: #ffffff;
+  border-color: #004d43;
+  box-shadow: 0 8px 20px rgba(0, 77, 67, 0.12);
+}
+
+.luxury-cube-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #004d43;
+  font-size: 24px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.luxury-cube-val {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+
+.luxury-cube-lbl {
+  font-family: 'Jost', sans-serif !important;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #004d43;
+}
+
+.luxury-highlight-box:hover {
+  background-color: #ffffff;
+  border-color: #a7f3d0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 77, 67, 0.06);
+}
+
+.luxury-highlight-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #004d43;
+  font-size: 22px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  flex-shrink: 0;
+}
+
+.luxury-amenity-card {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'Jost', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  transition: all 0.25s ease;
+}
+
+.luxury-amenity-card:hover {
+  background-color: #ffffff;
+  border-color: #004d43;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 77, 67, 0.08);
+}
+
+/* ELEGANT LOCATION & POLICY CARDS DESIGN */
+.luxury-directions-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #004d43;
+  color: #ffffff !important;
+  font-family: 'Jost', sans-serif !important;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: 100px;
+  box-shadow: 0 4px 14px rgba(0, 77, 67, 0.2);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none !important;
+}
+
+.luxury-directions-btn:hover {
+  background-color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+}
+
+.luxury-hero-address {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+  margin-bottom: 24px;
+}
+
+.luxury-hero-address-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #004d43;
+  font-size: 22px;
+  box-shadow: 0 2px 8px rgba(0, 77, 67, 0.08);
+  flex-shrink: 0;
+}
+
+.luxury-info-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 22px 24px;
+  height: 100%;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.02);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.luxury-info-card:hover {
+  border-color: #004d43;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 77, 67, 0.08);
+}
+
+.luxury-info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #004d43;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 /* RESPONSIVE MEDIA QUERIES FOR MOBILE & TABLET */

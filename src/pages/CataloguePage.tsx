@@ -479,7 +479,7 @@ export const CataloguePage: React.FC = () => {
                     checked={showAvailableOnly}
                     onChange={(e) => setShowAvailableOnly(e.target.checked)}
                   />
-                  Hide unavailable villas for selected dates
+                  Hide booked villas for selected dates
                 </label>
               </div>
             )}

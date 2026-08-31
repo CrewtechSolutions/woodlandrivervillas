@@ -79,17 +79,65 @@ export const catalogueApiService = {
           const photos = p.attributes?.photos || [];
           const heroImage = photos[0] || '/assets/img/cards/rooms/2/1.png';
 
+          const rooms = p.attributes?.no_of_rooms;
+          const rawGuestsAllowed = p.attributes?.guests_allowed;
+          const parsedGuestsAllowed = rawGuestsAllowed ? (Number(String(rawGuestsAllowed).replace(/\D/g, '')) || 12) : 12;
+          const numRooms = Number(rooms) || 4;
+          const subtitleStr = rooms && rawGuestsAllowed 
+            ? `${numRooms} Bedroom${numRooms > 1 ? 's' : ''} • Up to ${parsedGuestsAllowed} Guests • Alibaug`
+            : 'Private Luxury Villa Estate in Alibaug';
+
+          const apiAddons = (mainOffering?.addons || p.offerings?.[0]?.addons || []).map((add: any) => ({
+            id: add.id,
+            name: add.name,
+            description: add.description || '',
+            priceCents: add.priceCents,
+            priceType: add.priceType === 'PER_DAY' ? 'PER_DURATION' : (add.priceType || 'PER_UNIT'),
+            multiSelect: add.multiSelect !== false,
+            maxQuantity: add.maxQuantity || 14
+          }));
+
+          const finalAddons = apiAddons.length > 0 ? apiAddons : [
+            {
+              id: `addon_extra_person_${p.id}`,
+              name: 'Additional Person / Extra Guest',
+              description: 'Extra mattress, bedding, towels & housekeeping',
+              priceCents: 150000,
+              priceType: 'PER_DURATION',
+              multiSelect: true,
+              maxQuantity: 10
+            },
+            {
+              id: `addon_veg_meal_${p.id}`,
+              name: 'Veg Meal Package (Per Person)',
+              description: 'All meals (Breakfast, Lunch, High Tea, Dinner)',
+              priceCents: 120000,
+              priceType: 'PER_DURATION',
+              multiSelect: true,
+              maxQuantity: 20
+            },
+            {
+              id: `addon_non_veg_meal_${p.id}`,
+              name: 'Non-Veg Meal Package (Per Person)',
+              description: 'All meals (Breakfast, Lunch, High Tea, Dinner)',
+              priceCents: 150000,
+              priceType: 'PER_DURATION',
+              multiSelect: true,
+              maxQuantity: 20
+            }
+          ];
+
           return {
             id: p.id,
             slug: slug,
             name: p.name,
             offeringId: mainOffering?.id,
-            subtitle: `${p.attributes?.no_of_rooms || '4 BEDROOMS'} • ${p.attributes?.guests_allowed || '12 GUESTS'} • ALIBAG`,
+            subtitle: subtitleStr,
             description: p.description || `${p.name} offers a luxurious, private riverfront sanctuary in Zirad, Alibaug featuring premium amenities and private pool access.`,
             bedrooms: String(p.attributes?.no_of_rooms || '4 Bedrooms'),
             bathrooms: String(p.attributes?.no_of_bathrooms || '5 Bathrooms'),
-            guests: String(p.attributes?.guests_allowed || '12 Guests Allowed'),
-            maxGuests: typeof p.attributes?.guests_allowed === 'number' ? p.attributes.guests_allowed : 12,
+            guests: String(p.attributes?.guests_allowed || `${parsedGuestsAllowed} Guests`),
+            maxGuests: parsedGuestsAllowed,
             pricePerNight: price,
             securityDeposit: deposit,
             cleaningFee: 0,
@@ -103,15 +151,7 @@ export const catalogueApiService = {
               'Caretaker Onsite',
               'Generators & Power Backup',
             ],
-            addons: (mainOffering?.addons || p.offerings?.[0]?.addons || []).map((add: any) => ({
-              id: add.id,
-              name: add.name,
-              description: add.description || '',
-              priceCents: add.priceCents,
-              priceType: add.priceType === 'PER_DAY' ? 'PER_DURATION' : (add.priceType || 'PER_UNIT'),
-              multiSelect: add.multiSelect !== false,
-              maxQuantity: add.maxQuantity || 14
-            })),
+            addons: finalAddons,
             bookingUrl: `https://www.saffronstays.com/view/${slug}`,
           };
         });
@@ -500,6 +540,7 @@ export const coreApiService = {
     offeringId: string;
     startDate: Date;
     endDate: Date;
+    guests?: number;
     selectedAddons?: { id: string; quantity: number }[];
   }): Promise<any> {
     try {
@@ -511,9 +552,11 @@ export const coreApiService = {
           'x-api-key': API_KEY
         },
         body: JSON.stringify({
-          ...payload,
+          offeringId: payload.offeringId,
           startDate: payload.startDate.toISOString(),
           endDate: payload.endDate.toISOString(),
+          guests: payload.guests || 1,
+          selectedAddons: payload.selectedAddons || []
         })
       });
       if (!response.ok) throw new Error('Failed to calculate pricing');

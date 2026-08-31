@@ -1,0 +1,224 @@
+/* VILLA DETAIL PAGE - DEDICATED CALCULATOR & GALLERY SLIDER STYLES */
+
+/* DEDICATED LUXURY OWL SLIDER */
+.luxury-owl-container {
+  position: relative;
+  width: 100%;
+}
+
+.luxury-owl-track {
+  display: flex !important;
+  gap: 16px !important;
+  overflow-x: auto !important;
+  scroll-behavior: smooth !important;
+  scroll-snap-type: x mandatory !important;
+  padding: 8px 4px 16px 4px !important;
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
+}
+
+.luxury-owl-track::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.luxury-owl-item {
+  flex: 0 0 175px !important;
+  width: 175px !important;
+  height: 120px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  cursor: pointer !important;
+  border: 1px solid #e2e8f0 !important;
+  scroll-snap-align: start !important;
+  background-color: #f8fafc !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05) !important;
+  transition: all 0.25s ease !important;
+}
+
+.luxury-owl-item:hover {
+  transform: translateY(-3px) !important;
+  border-color: #004d43 !important;
+  box-shadow: 0 10px 24px rgba(0, 77, 67, 0.14) !important;
+}
+
+.luxury-owl-item img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* ELEGANT VILLA CALCULATOR CARD (COMPACT & SLEEK) */
+.luxury-calc-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.07);
+  position: sticky;
+  top: 100px;
+  z-index: 10;
+}
+
+.luxury-calc-header {
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.luxury-rate-badge {
+  background: #0f172a;
+  color: #ffffff;
+  font-family: 'Jost', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.luxury-inclusions-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.luxury-date-input-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  height: 44px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.luxury-date-input-box:hover {
+  border-color: #004d43;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 77, 67, 0.06);
+}
+
+.luxury-addon-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.luxury-addon-item:hover {
+  border-color: #cbd5e1;
+}
+
+.luxury-counter-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.luxury-counter-btn:hover:not(:disabled) {
+  background: #004d43;
+  color: #ffffff;
+  border-color: #004d43;
+}
+
+.luxury-reserve-btn {
+  width: 100%;
+  height: 48px;
+  background: #004d43;
+  color: #ffffff;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 6px 20px rgba(0, 77, 67, 0.22);
+  margin-bottom: 12px !important;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.luxury-reserve-btn:hover:not(:disabled) {
+  background: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.25);
+}
+
+.luxury-reserve-btn:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.luxury-whatsapp-btn {
+  width: 100%;
+  height: 44px;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1.5px solid #e2e8f0;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px !important;
+  transition: all 0.25s ease;
+  text-decoration: none !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.luxury-whatsapp-btn:hover {
+  background: #ecfdf5;
+  border-color: #25d366;
+  color: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.15);
+}
+
+.luxury-concierge-link {
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 4px;
+  transition: color 0.2s ease;
+  text-decoration: none !important;
+}
+
+.luxury-concierge-link:hover {
+  color: #004d43;
+}

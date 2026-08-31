@@ -114,7 +114,7 @@ export const CatalogueVillaCard: React.FC<CatalogueVillaCardProps> = ({
                   display: 'inline-block'
                 }}
               ></span> 
-              UNAVAILABLE
+              BOOKED
             </>
           )}
         </div>

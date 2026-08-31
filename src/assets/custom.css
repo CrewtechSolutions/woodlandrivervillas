@@ -41,12 +41,12 @@ html, body {
 /* PageHero Styles & Background Image */
 .pageHero {
   position: relative;
-  min-height: 540px;
+  min-height: 380px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 180px;
-  padding-bottom: 100px;
+  padding-top: 140px;
+  padding-bottom: 70px;
   overflow: hidden;
 }
 
@@ -83,19 +83,19 @@ html, body {
 }
 
 .pageHero__title {
-  font-size: 64px;
+  font-size: 56px;
   font-weight: 500;
   line-height: 1.1;
 }
 
 @media (max-width: 767px) {
   .pageHero {
-    min-height: 400px;
-    padding-top: 140px;
-    padding-bottom: 60px;
+    min-height: 280px;
+    padding-top: 110px;
+    padding-bottom: 50px;
   }
   .pageHero__title {
-    font-size: 38px;
+    font-size: 34px;
   }
 }
 
