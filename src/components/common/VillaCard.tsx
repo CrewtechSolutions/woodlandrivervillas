@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Villa } from '../../types';
+import { LazyImage } from './LazyImage';
 
 interface VillaCardProps {
   villa: Villa;

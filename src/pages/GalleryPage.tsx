@@ -5,6 +5,7 @@ import { galleryData } from '../data/galleryData';
 import { ImageModal } from '../components/common/ImageModal';
 import { InstagramGrid } from '../components/sections/InstagramGrid';
 import { BookingCTA } from '../components/common/BookingCTA';
+import { LazyImage } from '../components/common/LazyImage';
 
 export const GalleryPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<string>('all');
@@ -63,7 +64,7 @@ export const GalleryPage: React.FC = () => {
                 tabIndex={0}
                 aria-label={`Open ${item.title}`}
               >
-                <img src={item.image} alt={item.alt} loading="lazy" />
+                <LazyImage src={item.image} alt={item.alt} />
                 <span className="gallery-item__zoom" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="11" cy="11" r="7" />

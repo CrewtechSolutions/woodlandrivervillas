@@ -7,6 +7,7 @@ import { ImageModal } from '../components/common/ImageModal';
 import { LuxuryDatePickerModal } from '../components/common/LuxuryDatePickerModal';
 import { InstagramGrid } from '../components/sections/InstagramGrid';
 import { BookingCTA } from '../components/common/BookingCTA';
+import { LazyImage } from '../components/common/LazyImage';
 import { siteConfig } from '../data/siteConfig';
 import { coreApiService } from '../services/apiService';
 import '../styles/villaDetailCalculator.css';
@@ -592,10 +593,9 @@ export const VillaDetailPage: React.FC = () => {
                             onClick={() => setActivePhotoIndex(idx)}
                             className="luxury-owl-item group"
                           >
-                            <img
+                            <LazyImage
                               src={photoUrl}
                               alt={`${villa.name} photo ${idx + 1}`}
-                              loading="lazy"
                             />
                             <div className="absolute inset-0 bg-dark-1/20 group-hover:bg-dark-1/0 transition-colors flex-center">
                               <div className="size-32 rounded-full bg-white/95 text-dark-1 flex-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md transform scale-90 group-hover:scale-100">

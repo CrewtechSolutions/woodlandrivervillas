@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Villa } from '../../types';
+import { LazyImage } from './LazyImage';
 
 interface CatalogueVillaCardProps {
   villa: Villa;
@@ -55,12 +56,11 @@ export const CatalogueVillaCard: React.FC<CatalogueVillaCardProps> = ({
       {/* 1. FULL WIDTH IMAGE SECTION */}
       <div className="relative overflow-hidden bg-light-1" style={{ height: '240px', width: '100%' }}>
         <Link to={`/our-villas/${villa.slug}`} className="w-1/1 h-1/1 d-block relative overflow-hidden" style={{ width: '100%', height: '100%', display: 'block' }}>
-          <img
+          <LazyImage
             src={currentDisplayImage}
             alt={villa.name}
             className="w-1/1 h-1/1 object-cover transition-all duration-700 group-hover:scale-105"
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            loading="lazy"
           />
         </Link>
 

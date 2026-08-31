@@ -6,6 +6,7 @@ import { useVillas } from '../context/VillaContext';
 import { siteConfig } from '../data/siteConfig';
 import { InstagramGrid } from '../components/sections/InstagramGrid';
 import { BookingCTA } from '../components/common/BookingCTA';
+import { LazyImage } from '../components/common/LazyImage';
 
 export const VillasPage: React.FC = () => {
   const { villas } = useVillas();

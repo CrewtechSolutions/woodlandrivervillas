@@ -343,6 +343,15 @@ html {
   }
 }
 
+@keyframes lazyShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 /* Custom Sleek Date Picker & Select Dropdown Inputs */
 input[type="date"],
 select {
