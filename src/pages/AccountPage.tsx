@@ -17,10 +17,20 @@ export const AccountPage: React.FC = () => {
   const { villas } = useVillas();
   const location = useLocation();
 
-  const initialTab = (location.state as any)?.tab || 'profile';
-  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'complaints' | 'security'>(initialTab);
+  const getTabFromLocation = () => {
+    const searchTab = new URLSearchParams(location.search).get('tab');
+    const stateTab = (location.state as any)?.tab;
+    return (searchTab || stateTab || 'profile') as 'profile' | 'bookings' | 'complaints' | 'security';
+  };
+
+  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'complaints' | 'security'>(getTabFromLocation());
   const [bookingFilter, setBookingFilter] = useState<'all' | 'upcoming' | 'past'>('all');
   const [successBanner, setSuccessBanner] = useState<string | null>((location.state as any)?.message || null);
+
+  useEffect(() => {
+    const targetTab = getTabFromLocation();
+    setActiveTab(targetTab);
+  }, [location]);
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loadingBookings, setLoadingBookings] = useState<boolean>(true);

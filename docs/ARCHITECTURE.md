@@ -46,8 +46,13 @@ woodlandrivervillas/
 │   │   └── villasData.ts             # Villa interface definitions
 │   ├── pages/
 │   │   ├── HomePage.tsx              # Landing Page
+│   │   ├── CataloguePage.tsx         # Interactive Real-Time Catalogue & Date Filter Page
 │   │   ├── VillasPage.tsx            # Our Villas List Page
 │   │   ├── VillaDetailPage.tsx       # Dynamic SaffronStays-Style Villa Details Page
+│   │   ├── BookingDetailsPage.tsx    # Reservation Management & Payment Details Page
+│   │   ├── CheckoutPage.tsx          # Booking Checkout & Gateway Integration Page
+│   │   ├── AccountPage.tsx           # Guest Profile & My Bookings Dashboard Page
+│   │   ├── AuthPage.tsx              # Login & Register Modal/Page
 │   │   ├── AboutPage.tsx             # About Us Page
 │   │   └── ContactPage.tsx           # Contact Page
 │   ├── services/

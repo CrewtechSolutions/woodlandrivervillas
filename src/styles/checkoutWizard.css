@@ -337,6 +337,70 @@
   align-items: center;
 }
 
+/* RESPONSIVE BREADCRUMB SYSTEM */
+@media (max-width: 991px) {
+  .luxury-breadcrumb-bar {
+    min-height: 56px;
+    padding: 8px 0;
+  }
+
+  .luxury-breadcrumb-nav {
+    gap: 8px;
+    padding: 6px 0;
+  }
+
+  .luxury-breadcrumb-link {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  .luxury-breadcrumb-separator {
+    font-size: 14px;
+    margin: 0 2px;
+  }
+
+  .luxury-breadcrumb-active {
+    font-size: 11px;
+    padding: 6px 14px;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 767px) {
+  .luxury-breadcrumb-bar {
+    min-height: auto;
+    padding: 10px 0;
+  }
+
+  .luxury-breadcrumb-nav {
+    gap: 6px;
+    padding: 4px 0;
+    width: 100%;
+  }
+
+  .luxury-breadcrumb-link {
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+
+  .luxury-breadcrumb-separator {
+    font-size: 12px;
+    margin: 0 1px;
+  }
+
+  .luxury-breadcrumb-active {
+    font-size: 10.5px;
+    padding: 4px 10px;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 /* ELEGANT SUB-NAV NAVIGATION BAR */
 .luxury-subnav-bar {
   background: rgba(255, 255, 255, 0.95);

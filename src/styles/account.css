@@ -612,3 +612,61 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(8px);
 }
+
+/* Compact Page Hero Override for Booking Details */
+.pageHero.-compact {
+  min-height: 120px !important;
+  height: 120px !important;
+  padding: 0 !important;
+}
+
+/* Luxury Download Invoice Button & Micro-Animations */
+.btn-download-invoice-luxury {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #cfa856 0%, #b89243 100%);
+  color: #ffffff !important;
+  font-family: 'Jost', 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 14px rgba(207, 168, 86, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+}
+
+.btn-download-invoice-luxury:hover {
+  background: linear-gradient(135deg, #122223 0%, #1a3234 100%);
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(18, 34, 35, 0.25);
+  border-color: rgba(207, 168, 86, 0.5);
+}
+
+.btn-download-invoice-luxury svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s ease;
+}
+
+.btn-download-invoice-luxury:hover svg {
+  transform: translateY(2px);
+}
+
+@media (max-width: 767px) {
+  .btn-download-invoice-luxury {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 11px;
+    margin-top: 6px;
+  }
+}
+

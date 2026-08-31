@@ -25,11 +25,12 @@ VITE_CATALOGUE_API_KEY=mk_8ea1437b92745ed3576ef6773956e5054b817afc9c33e75ee87af6
 
 ## 🔄 API Service Layer (`src/services/apiService.ts`)
 
-### 1. Catalogue Service (`catalogueApiService`)
-Maps raw catalogue items into standard `Villa` domain objects.
+### 1. Catalogue & Core Service (`catalogueApiService` / `coreApiService`)
+Maps raw catalogue items into standard `Villa` domain objects and handles availability queries.
 - **Products Filtering**: Only active items matching villa/cabana patterns are processed.
 - **Photo Assets**: Extracted from `attributes.photos`.
 - **Pricing & Deposits**: Calculated from primary `offerings[0]`.
+- **Availability Check**: `POST /bookings/availability` with `{ offeringId, startDate, endDate, guests }`. Used concurrently on `CataloguePage` to verify real-time villa availability for selected stay dates.
 
 ### 2. Auth Service (`authApiService`)
 Handles guest authentication and account management:
@@ -44,4 +45,5 @@ Handles reservation management:
 ---
 
 ## ⚠️ Pure Dynamic Rule
-No static fallback mocks exist. All dynamic villa, auth, and reservation data is fetched live from API integration.
+No static fallback mocks exist. All dynamic villa, auth, availability, and reservation data is fetched live from API integration.
+

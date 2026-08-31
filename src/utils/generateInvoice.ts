@@ -9,16 +9,49 @@ export const generateInvoicePdf = (booking: Booking, user: AuthUser) => {
   });
 
   const raw = booking.raw || {};
-  const breakdown = raw.metadata?.pricingBreakdown;
-  const lineItems: any[] = breakdown?.details?.lineItems || [];
+  const breakdown = raw.metadata?.pricingBreakdown || raw.pricingBreakdown || raw.breakdown || raw.metadata?.breakdown;
+  let lineItems: any[] = breakdown?.details?.lineItems || breakdown?.lineItems || [];
 
-  const depositCents = raw.depositCents ?? breakdown?.price?.deposit ?? 600000;
+  const depositCents = raw.depositCents ?? breakdown?.price?.deposit ?? 1000000;
   const depositAmount = Math.round(depositCents / 100);
 
   const grandTotal = booking.totalPrice || (raw.totalCents ? Math.round(raw.totalCents / 100) : 20315);
 
   const pickupLoc = raw.pickupLocation?.name || 'Zirad, Alibaug';
   const pickupAddr = raw.pickupLocation?.address || '230/3, Woodland River Villas, Zirad Pada, Zirad, Alibaug - 402201';
+
+  // If lineItems is empty, synthesize from raw.items if present
+  if ((!lineItems || lineItems.length === 0) && raw.items && Array.isArray(raw.items) && raw.items.length > 0) {
+    const checkIn = new Date(raw.startTime || booking.checkIn);
+    const checkOut = new Date(raw.endTime || booking.checkOut);
+    const nights = Math.max(1, Math.round((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)));
+    const totalCents = Number(raw.totalCents ?? (grandTotal * 100)) || 0;
+    const roomCents = Math.max(0, totalCents - depositCents);
+
+    const synthesized: any[] = [];
+    let addonCentsTotal = 0;
+
+    raw.items.slice(1).forEach((item: any) => {
+      const itemVal = Number(item.totalCents ?? item.priceCents ?? (item.price ? item.price * 100 : 0)) * (item.quantity || 1);
+      addonCentsTotal += itemVal;
+      synthesized.push({
+        label: item.offering?.product?.name || item.name || 'Add-on Service',
+        detail: `${item.quantity || 1} Unit(s)`,
+        units: item.quantity || 1,
+        total: itemVal
+      });
+    });
+
+    const baseStayCents = Math.max(0, roomCents - addonCentsTotal);
+    synthesized.unshift({
+      label: `${booking.villaName || 'Woodland River Villa'} - Stay Charge`,
+      detail: `${nights} Night(s) Stay`,
+      units: nights,
+      total: baseStayCents
+    });
+
+    lineItems = synthesized;
+  }
 
   const printWindow = window.open('', '_blank', 'width=900,height=1000');
   if (!printWindow) {
@@ -31,16 +64,19 @@ export const generateInvoicePdf = (booking: Booking, user: AuthUser) => {
   if (lineItems.length > 0) {
     lineItemsHtml = lineItems
       .map(
-        (item: any) => `
+        (item: any) => {
+          const itemValCents = Number(item.total ?? item.totalCents ?? item.price ?? item.amount ?? item.priceCents ?? item.unitPrice ?? 0);
+          return `
       <tr>
         <td>
           <strong>${item.label || 'Villa Reservation Charge'}</strong><br />
-          <span style="font-size: 12px; color: #6b7280;">${item.detail || ''}</span>
+          <span style="font-size: 12px; color: #6b7280;">${item.detail || item.description || ''}</span>
         </td>
         <td>${item.units || item.quantity || 1} Unit(s)</td>
-        <td style="text-align: right;">₹${Math.round((item.total || item.unitPrice || 0) / 100).toLocaleString('en-IN')}</td>
+        <td style="text-align: right;">₹${Math.round(itemValCents / 100).toLocaleString('en-IN')}</td>
       </tr>
-    `
+    `;
+        }
       )
       .join('');
   } else {

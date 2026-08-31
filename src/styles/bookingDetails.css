@@ -1,0 +1,312 @@
+/* Luxury Resort Booking Details Design System */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+.bd-wrapper {
+  background: #f7f7f5;
+  padding: 40px 0 80px 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #122223;
+}
+
+.bd-container {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.bd-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e8e6e1;
+  box-shadow: 0 10px 30px rgba(18, 34, 35, 0.04);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 767px) {
+  .bd-card {
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+}
+
+.bd-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0eee9;
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bd-card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #122223;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.bd-badge-ref {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #b89243;
+  background: #fdfbf5;
+  border: 1px solid #eadcb9;
+  padding: 6px 14px;
+  border-radius: 100px;
+}
+
+.bd-status-settled {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bd-status-due {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Bento Info Cards */
+.bd-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 991px) {
+  .bd-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 575px) {
+  .bd-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bd-info-item {
+  background: #faf9f6;
+  border: 1px solid #eae8e1;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.bd-info-icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(18, 34, 35, 0.06);
+  border: 1px solid #eae8e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.bd-info-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #71717a;
+  margin-bottom: 4px;
+}
+
+.bd-info-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #122223;
+  margin-bottom: 2px;
+}
+
+.bd-info-sub {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Location Bar */
+.bd-location-box {
+  background: #faf9f6;
+  border: 1px solid #eae8e1;
+  border-radius: 16px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+/* Add-ons list */
+.bd-addons-container {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f0eee9;
+}
+
+.bd-addon-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 767px) {
+  .bd-addon-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bd-addon-card {
+  background: #faf9f6;
+  border: 1px solid #eae8e1;
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bd-addon-qty {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #cfa856;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+/* Ledger Table */
+.bd-ledger-box {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.bd-ledger-header {
+  background: #122223;
+  color: #ffffff;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.bd-ledger-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+
+.bd-ledger-row:last-child {
+  border-bottom: none;
+}
+
+.bd-ledger-item-title {
+  font-weight: 600;
+  color: #122223;
+}
+
+.bd-ledger-item-sub {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.bd-ledger-amount {
+  font-weight: 700;
+  font-size: 15px;
+  color: #122223;
+}
+
+.bd-ledger-total-bar {
+  background: #faf9f6;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #122223;
+  border-top: 1px solid #eae8e1;
+}
+
+/* Security Deposit */
+.bd-deposit-card {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 16px;
+  padding: 22px 26px;
+  margin: 20px 24px 24px 24px;
+}
+
+/* Transaction Table */
+.bd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.bd-table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bd-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.bd-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Outstanding Balance Box */
+.bd-balance-box {
+  background: #faf9f6;
+  border: 1px solid #eae8e1;
+  border-radius: 16px;
+  padding: 26px;
+}
