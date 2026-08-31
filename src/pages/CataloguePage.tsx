@@ -59,7 +59,7 @@ export const CataloguePage: React.FC = () => {
 
   const [startDate, setStartDate] = useState(initialCheckIn);
   const [endDate, setEndDate] = useState(initialCheckOut);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [calendarMode, setCalendarMode] = useState<'checkIn' | 'checkOut' | null>(null);
   const [guestCount, setGuestCount] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [activeCategory, setActiveCategory] = useState(initialCategory);
@@ -272,8 +272,9 @@ export const CataloguePage: React.FC = () => {
                 </label>
                 <div className="relative">
                   <input
-                    type="date"
-                    className="w-1/1 bg-light-1 border-1 border-light-2 focus:border-accent-1 text-dark-1 outline-none transition-all"
+                    type="text"
+                    readOnly
+                    className="w-1/1 bg-light-1 border-1 border-light-2 focus:border-accent-1 text-dark-1 outline-none transition-all cursor-pointer"
                     style={{ 
                       height: '52px', 
                       borderRadius: '14px',
@@ -281,29 +282,33 @@ export const CataloguePage: React.FC = () => {
                       fontSize: '14px',
                       fontWeight: 600
                     }}
-                    value={startDate}
-                    onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                    onChange={(e) => handleStartDateChange(e.target.value)}
-                    min={todayStr}
+                    value={startDate ? new Date(startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Select Check-In'}
+                    onClick={() => setCalendarMode(calendarMode === 'checkIn' ? null : 'checkIn')}
                   />
+                  <i className="icon-calendar absolute right-16 top-1/2 -translate-y-1/2 text-accent-1 text-14 pointer-events-none"></i>
                 </div>
 
-                {isCalendarOpen && (
+                {calendarMode === 'checkIn' && (
                   <LuxuryDatePickerModal
+                    mode="checkIn"
                     startDate={startDate}
                     endDate={endDate}
-                    onSelectDates={(s, e) => {
-                      setStartDate(s);
-                      setEndDate(e);
-                      updateUrlParams(s, e, searchQuery, activeCategory);
+                    onSelectDate={(m, selectedDate) => {
+                      setStartDate(selectedDate);
+                      let newEnd = endDate;
+                      if (!endDate || endDate <= selectedDate) {
+                        newEnd = getTomorrowString(selectedDate);
+                        setEndDate(newEnd);
+                      }
+                      updateUrlParams(selectedDate, newEnd, searchQuery, activeCategory);
                     }}
-                    onClose={() => setIsCalendarOpen(false)}
+                    onClose={() => setCalendarMode(null)}
                   />
                 )}
               </div>
 
               {/* CHECK-OUT DATE PICKER */}
-              <div className="col-lg col-md-6">
+              <div className="col-lg col-md-6 relative">
                 <label 
                   className="text-accent-1 mb-10 d-flex items-center"
                   style={{
@@ -317,8 +322,9 @@ export const CataloguePage: React.FC = () => {
                 </label>
                 <div className="relative">
                   <input
-                    type="date"
-                    className="w-1/1 bg-light-1 border-1 border-light-2 focus:border-accent-1 text-dark-1 outline-none transition-all"
+                    type="text"
+                    readOnly
+                    className="w-1/1 bg-light-1 border-1 border-light-2 focus:border-accent-1 text-dark-1 outline-none transition-all cursor-pointer"
                     style={{ 
                       height: '52px', 
                       borderRadius: '14px',
@@ -326,12 +332,24 @@ export const CataloguePage: React.FC = () => {
                       fontSize: '14px',
                       fontWeight: 600
                     }}
-                    value={endDate}
-                    onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                    onChange={(e) => handleEndDateChange(e.target.value)}
-                    min={getTomorrowString(startDate || todayStr)}
+                    value={endDate ? new Date(endDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Select Check-Out'}
+                    onClick={() => setCalendarMode(calendarMode === 'checkOut' ? null : 'checkOut')}
                   />
+                  <i className="icon-calendar absolute right-16 top-1/2 -translate-y-1/2 text-accent-1 text-14 pointer-events-none"></i>
                 </div>
+
+                {calendarMode === 'checkOut' && (
+                  <LuxuryDatePickerModal
+                    mode="checkOut"
+                    startDate={startDate}
+                    endDate={endDate}
+                    onSelectDate={(m, selectedDate) => {
+                      setEndDate(selectedDate);
+                      updateUrlParams(startDate, selectedDate, searchQuery, activeCategory);
+                    }}
+                    onClose={() => setCalendarMode(null)}
+                  />
+                )}
               </div>
 
               {/* GUESTS SELECTOR */}

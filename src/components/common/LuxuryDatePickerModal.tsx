@@ -1,28 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface LuxuryDatePickerModalProps {
+  mode: 'checkIn' | 'checkOut';
   startDate: string;
   endDate: string;
-  onSelectDates: (start: string, end: string) => void;
+  onSelectDate: (mode: 'checkIn' | 'checkOut', selectedDate: string) => void;
   onClose: () => void;
 }
 
 export const LuxuryDatePickerModal: React.FC<LuxuryDatePickerModalProps> = ({
+  mode,
   startDate,
   endDate,
-  onSelectDates,
+  onSelectDate,
   onClose,
 }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const initialMonth = startDate ? new Date(startDate) : today;
+  const activeDateStr = mode === 'checkIn' ? startDate : endDate;
+  const initialMonth = activeDateStr ? new Date(activeDateStr) : (startDate ? new Date(startDate) : today);
   const [currentYear, setCurrentYear] = useState<number>(initialMonth.getFullYear());
   const [currentMonth, setCurrentMonth] = useState<number>(initialMonth.getMonth());
-
-  const [tempStart, setTempStart] = useState<string>(startDate);
-  const [tempEnd, setTempEnd] = useState<string>(endDate);
-  const [selectingStep, setSelectingStep] = useState<'start' | 'end'>(startDate ? 'end' : 'start');
 
   const prevMonth = () => {
     if (currentMonth === 0) {
@@ -56,71 +70,46 @@ export const LuxuryDatePickerModal: React.FC<LuxuryDatePickerModalProps> = ({
     return `${year}-${m}-${d}`;
   };
 
+  const minAllowedDate = () => {
+    if (mode === 'checkIn') return today;
+    if (startDate) {
+      const s = new Date(startDate);
+      s.setHours(0, 0, 0, 0);
+      s.setDate(s.getDate() + 1); // Checkout must be at least 1 day after checkin
+      return s;
+    }
+    return today;
+  };
+
   const handleDateClick = (dayStr: string) => {
     const clickedDate = new Date(dayStr);
     clickedDate.setHours(0, 0, 0, 0);
 
-    if (clickedDate < today) return;
+    const minDate = minAllowedDate();
+    if (clickedDate < minDate) return;
 
-    if (selectingStep === 'start' || !tempStart || (tempStart && tempEnd && clickedDate < new Date(tempStart))) {
-      setTempStart(dayStr);
-      const nextDay = new Date(clickedDate);
-      nextDay.setDate(nextDay.getDate() + 1);
-      const nextDayStr = formatDateStr(nextDay.getFullYear(), nextDay.getMonth(), nextDay.getDate());
-      setTempEnd(nextDayStr);
-      setSelectingStep('end');
-    } else if (selectingStep === 'end') {
-      if (clickedDate > new Date(tempStart)) {
-        setTempEnd(dayStr);
-        onSelectDates(tempStart, dayStr);
-      } else {
-        setTempStart(dayStr);
-        const nextDay = new Date(clickedDate);
-        nextDay.setDate(nextDay.getDate() + 1);
-        const nextDayStr = formatDateStr(nextDay.getFullYear(), nextDay.getMonth(), nextDay.getDate());
-        setTempEnd(nextDayStr);
-      }
-    }
-  };
-
-  const handleApply = () => {
-    if (tempStart && tempEnd) {
-      onSelectDates(tempStart, tempEnd);
-      onClose();
-    }
-  };
-
-  const handleQuickSelect = (daysAhead: number) => {
-    const sDate = new Date(today);
-    const eDate = new Date(today);
-    eDate.setDate(sDate.getDate() + daysAhead);
-
-    const sStr = formatDateStr(sDate.getFullYear(), sDate.getMonth(), sDate.getDate());
-    const eStr = formatDateStr(eDate.getFullYear(), eDate.getMonth(), eDate.getDate());
-
-    setTempStart(sStr);
-    setTempEnd(eStr);
-    onSelectDates(sStr, eStr);
+    onSelectDate(mode, dayStr);
     onClose();
   };
 
   return (
     <div 
+      ref={modalRef}
       className="absolute left-0 top-full mt-12 bg-white rounded-24 shadow-2xl p-24 border-1 border-light-2 animate-fadeIn"
       style={{
-        width: '360px',
+        width: '340px',
         boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.25)',
         zIndex: 1000
       }}
     >
-      {/* HEADER & QUICK PRESETS */}
+      {/* HEADER */}
       <div className="d-flex items-center justify-between pb-16 mb-16 border-bottom-light">
         <div>
-          <span className="text-11 font-bold uppercase tracking-widest text-accent-1 d-block">Select Stay Dates</span>
+          <span className="text-11 font-bold uppercase tracking-widest text-accent-1 d-block">
+            {mode === 'checkIn' ? 'Select Check-In Date' : 'Select Check-Out Date'}
+          </span>
           <span className="text-13 font-semibold text-dark-1">
-            {tempStart ? new Date(tempStart).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Check-In'} 
-            {' — '}
-            {tempEnd ? new Date(tempEnd).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Check-Out'}
+            {activeDateStr ? new Date(activeDateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Choose Date'}
           </span>
         </div>
         <button 
@@ -128,28 +117,6 @@ export const LuxuryDatePickerModal: React.FC<LuxuryDatePickerModalProps> = ({
           className="size-32 rounded-full bg-light-1 hover:bg-light-2 flex-center text-dark-1 transition-colors"
         >
           <i className="icon-close text-12"></i>
-        </button>
-      </div>
-
-      {/* QUICK PRESET BUTTONS */}
-      <div className="d-flex gap-8 mb-16">
-        <button
-          onClick={() => handleQuickSelect(1)}
-          className="px-12 py-6 rounded-200 bg-light-1 hover:bg-accent-1 hover:text-white text-11 font-bold uppercase tracking-wider text-dark-1 transition-all"
-        >
-          1 Night
-        </button>
-        <button
-          onClick={() => handleQuickSelect(2)}
-          className="px-12 py-6 rounded-200 bg-light-1 hover:bg-accent-1 hover:text-white text-11 font-bold uppercase tracking-wider text-dark-1 transition-all"
-        >
-          2 Nights
-        </button>
-        <button
-          onClick={() => handleQuickSelect(3)}
-          className="px-12 py-6 rounded-200 bg-light-1 hover:bg-accent-1 hover:text-white text-11 font-bold uppercase tracking-wider text-dark-1 transition-all"
-        >
-          3 Nights
         </button>
       </div>
 
@@ -195,24 +162,21 @@ export const LuxuryDatePickerModal: React.FC<LuxuryDatePickerModalProps> = ({
           const cellDate = new Date(dateStr);
           cellDate.setHours(0, 0, 0, 0);
 
-          const isPast = cellDate < today;
-          const isSelectedStart = tempStart === dateStr;
-          const isSelectedEnd = tempEnd === dateStr;
-          const isInRange = tempStart && tempEnd && cellDate > new Date(tempStart) && cellDate < new Date(tempEnd);
+          const minDate = minAllowedDate();
+          const isDisabled = cellDate < minDate;
+          const isSelected = activeDateStr === dateStr;
           const isToday = cellDate.getTime() === today.getTime();
 
           return (
             <button
               key={dayNum}
               onClick={() => handleDateClick(dateStr)}
-              disabled={isPast}
+              disabled={isDisabled}
               className={`rounded-full flex-center text-13 font-semibold transition-all relative ${
-                isPast
+                isDisabled
                   ? 'text-light-3 cursor-not-allowed opacity-30'
-                  : isSelectedStart || isSelectedEnd
+                  : isSelected
                   ? 'bg-accent-1 text-white shadow-md font-bold scale-105 z-2'
-                  : isInRange
-                  ? 'bg-emerald-50 text-accent-1 font-bold rounded-none'
                   : isToday
                   ? 'border-1 border-accent-1 text-accent-1 font-bold hover:bg-light-1'
                   : 'hover:bg-light-1 text-dark-1'
@@ -223,26 +187,6 @@ export const LuxuryDatePickerModal: React.FC<LuxuryDatePickerModalProps> = ({
             </button>
           );
         })}
-      </div>
-
-      {/* APPLY ACTION */}
-      <div className="mt-20 pt-14 border-top-light d-flex justify-between items-center">
-        <button
-          onClick={() => {
-            setTempStart('');
-            setTempEnd('');
-          }}
-          className="text-12 font-bold text-sec hover:text-dark-1 uppercase tracking-wider"
-        >
-          Clear
-        </button>
-        <button
-          onClick={handleApply}
-          disabled={!tempStart || !tempEnd}
-          className="px-20 py-10 rounded-14 bg-accent-1 text-white text-12 font-bold uppercase tracking-wider hover:bg-dark-1 transition-all disabled:opacity-50"
-        >
-          Apply Dates
-        </button>
       </div>
     </div>
   );
