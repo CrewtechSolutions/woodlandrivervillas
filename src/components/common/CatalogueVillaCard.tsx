@@ -70,7 +70,7 @@ export const CatalogueVillaCard: React.FC<CatalogueVillaCardProps> = ({
             position: 'absolute',
             top: '16px',
             right: '16px',
-            zIndex: 20,
+            zIndex: 2,
             padding: '6px 14px',
             borderRadius: '200px',
             fontSize: '11px',

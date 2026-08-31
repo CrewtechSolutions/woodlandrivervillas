@@ -97,9 +97,10 @@ export const LuxuryDatePickerModal: React.FC<LuxuryDatePickerModalProps> = ({
       ref={modalRef}
       className="absolute left-0 top-full mt-12 bg-white rounded-24 shadow-2xl p-24 border-1 border-light-2 animate-fadeIn"
       style={{
-        width: '340px',
-        boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.25)',
-        zIndex: 1000
+        width: '100%',
+        maxWidth: '340px',
+        boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.35)',
+        zIndex: 99999
       }}
     >
       {/* HEADER */}

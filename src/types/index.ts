@@ -21,7 +21,7 @@ export interface Villa {
   addons?: {
     id: string;
     name: string;
-    description: string;
+    description?: string;
     priceCents: number;
     priceType: string;
     multiSelect: boolean;

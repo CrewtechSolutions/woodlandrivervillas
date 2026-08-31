@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useLocation } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { PageHero } from '../components/common/PageHero';
 import { useAuth } from '../context/AuthContext';
@@ -15,9 +15,12 @@ import '../styles/account.css';
 export const AccountPage: React.FC = () => {
   const { user, token, isAuthenticated, logout } = useAuth();
   const { villas } = useVillas();
+  const location = useLocation();
 
-  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'complaints' | 'security'>('profile');
+  const initialTab = (location.state as any)?.tab || 'profile';
+  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'complaints' | 'security'>(initialTab);
   const [bookingFilter, setBookingFilter] = useState<'all' | 'upcoming' | 'past'>('all');
+  const [successBanner, setSuccessBanner] = useState<string | null>((location.state as any)?.message || null);
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loadingBookings, setLoadingBookings] = useState<boolean>(true);
@@ -163,6 +166,26 @@ export const AccountPage: React.FC = () => {
       {/* MAIN BODY AREA WITH CENTERED PILL TABS */}
       <section className="bg-white text-dark-1 layout-pt-md pb-100 account-wrapper">
         <div className="container">
+
+          {/* SUCCESS NOTIFICATION BANNER */}
+          {successBanner && (
+            <div className="mb-40 p-24 bg-emerald-50 text-emerald-900 rounded-20 border-1 border-emerald-200 d-flex justify-between items-center shadow-sm animate-fadeIn">
+              <div className="d-flex items-center">
+                <i className="icon-check text-18 text-emerald-600 mr-12 size-36 rounded-full bg-emerald-100 flex-center flex-shrink-0"></i>
+                <div>
+                  <div className="text-16 font-bold">{successBanner}</div>
+                  <div className="text-13 text-emerald-700 font-medium mt-2">Your villa reservation is active and listed under My Bookings below.</div>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSuccessBanner(null)} 
+                className="text-emerald-700 hover:text-emerald-950 text-18 font-bold ml-16"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
           {/* ELEGANT CENTERED SUB-MENU NAVIGATION PILL BAR */}
           <div className="d-flex justify-center items-center mb-50 px-15">
             <div className="account-tabs-wrapper">

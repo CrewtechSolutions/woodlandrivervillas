@@ -246,7 +246,7 @@ export const CataloguePage: React.FC = () => {
       </section>
 
       {/* ELEGANT SEARCH & DATE FILTER CARD WITH EXPLICIT PADDINGS & ROUNDED CORNERS */}
-      <section className="relative z-4 pt-30 mb-50">
+      <section className="relative pt-30 mb-50" style={{ position: 'relative', zIndex: calendarMode ? 1000 : 4 }}>
         <div className="container">
           <div 
             className="bg-white border-1 border-light-2"

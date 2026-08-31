@@ -19,6 +19,7 @@ export interface CatalogueOffering {
   currency: string;
   priceUnit: string;
   active: boolean;
+  addons?: any[];
 }
 
 export interface CatalogueProduct {
@@ -102,6 +103,15 @@ export const catalogueApiService = {
               'Caretaker Onsite',
               'Generators & Power Backup',
             ],
+            addons: (mainOffering?.addons || p.offerings?.[0]?.addons || []).map((add: any) => ({
+              id: add.id,
+              name: add.name,
+              description: add.description || '',
+              priceCents: add.priceCents,
+              priceType: add.priceType === 'PER_DAY' ? 'PER_DURATION' : (add.priceType || 'PER_UNIT'),
+              multiSelect: add.multiSelect !== false,
+              maxQuantity: add.maxQuantity || 14
+            })),
             bookingUrl: `https://www.saffronstays.com/view/${slug}`,
           };
         });
@@ -453,6 +463,24 @@ export const bookingApiService = {
 };
 
 export const coreApiService = {
+  async getOfferings(productId?: string): Promise<any[]> {
+    try {
+      const url = productId 
+        ? `${API_BASE_URL}/offerings?productId=${productId}`
+        : `${API_BASE_URL}/offerings`;
+      const response = await fetch(url, {
+        headers: { 'x-api-key': API_KEY }
+      });
+      if (!response.ok) return [];
+      const result = await response.json();
+      const rawData = result.data || result;
+      return Array.isArray(rawData) ? rawData : [];
+    } catch (error) {
+      console.warn('Error fetching dynamic offerings:', error);
+      return [];
+    }
+  },
+
   async getOccupiedDates(offeringId: string): Promise<{ start: string, end: string }[]> {
     try {
       const url = `${API_BASE_URL}/bookings/calendar?offeringId=${offeringId}`;
