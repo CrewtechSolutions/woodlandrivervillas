@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Booking, ComplaintTicket } from '../../types';
 import { siteConfig } from '../../data/siteConfig';
+import { MessageSquare, Clock, CheckCircle2, Send, AlertTriangle, LifeBuoy, FileText } from 'lucide-react';
 
 interface GuestComplaintsPortalProps {
   bookings: Booking[];
@@ -115,12 +116,12 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
 
   const getCategoryLabel = (cat: string) => {
     switch (cat) {
-      case 'housekeeping': return '🧹 Housekeeping & Hygiene';
-      case 'amenities': return '🏊 Amenities (Pool/WiFi/AC)';
-      case 'billing': return '💳 Billing & Payments';
-      case 'staff_service': return '🛎️ Staff & Service';
-      case 'maintenance': return '🔧 Maintenance & Repairs';
-      default: return '💬 General Inquiry';
+      case 'housekeeping': return 'Housekeeping & Hygiene';
+      case 'amenities': return 'Amenities (Pool/WiFi/AC)';
+      case 'billing': return 'Billing & Payments';
+      case 'staff_service': return 'Staff & Service';
+      case 'maintenance': return 'Maintenance & Repairs';
+      default: return 'General Inquiry';
     }
   };
 
@@ -130,8 +131,8 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
       <div className="row x-gap-16 y-gap-16 mb-32">
         <div className="col-md-4 col-sm-6">
           <div className="stat-card-luxury">
-            <div className="size-48 rounded-12 bg-light-1 text-accent-1 flex-center flex-shrink-0 border-1 border-light-1">
-              <i className="icon-chat text-20"></i>
+            <div className="stat-icon-box total">
+              <MessageSquare size={22} />
             </div>
             <div>
               <div className="text-24 font-serif fw-700 text-dark-1">{tickets.length}</div>
@@ -142,8 +143,8 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
 
         <div className="col-md-4 col-sm-6">
           <div className="stat-card-luxury">
-            <div className="size-48 rounded-12 bg-amber-50 text-amber-600 flex-center flex-shrink-0 border-1 border-amber-200">
-              <i className="icon-clock text-20"></i>
+            <div className="stat-icon-box active">
+              <Clock size={22} />
             </div>
             <div>
               <div className="text-24 font-serif fw-700 text-amber-600">{activeCount}</div>
@@ -154,8 +155,8 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
 
         <div className="col-md-4 col-sm-12">
           <div className="stat-card-luxury">
-            <div className="size-48 rounded-12 bg-emerald-50 text-emerald-600 flex-center flex-shrink-0 border-1 border-emerald-200">
-              <i className="icon-check text-20"></i>
+            <div className="stat-icon-box resolved">
+              <CheckCircle2 size={22} />
             </div>
             <div>
               <div className="text-24 font-serif fw-700 text-emerald-700">{resolvedCount}</div>
@@ -173,7 +174,7 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
             {/* CARD HEADER & FILTER PILLS */}
             <div className="d-flex justify-between items-center mb-24 pb-16 border-bottom-light flex-wrap y-gap-12">
               <div>
-                <div className="text-12 uppercase text-accent-1 font-semibold tracking-wider mb-2">HISTORY & STATUS</div>
+                <div className="text-11 uppercase text-accent-1 font-bold tracking-wider mb-2">HISTORY & STATUS</div>
                 <h3 className="text-24 font-serif fw-700 text-dark-1">Support Tickets</h3>
               </div>
 
@@ -207,7 +208,7 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
                   <div key={t.id} className="complaint-card">
                     <div className="d-flex justify-between items-start flex-wrap y-gap-10 mb-12">
                       <div>
-                        <div className="d-flex items-center x-gap-8 mb-6 flex-wrap">
+                        <div className="ticket-badge-row">
                           <span
                             className={`ticket-status-badge ${
                               t.status === 'resolved'
@@ -225,12 +226,12 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
                             {t.priority} priority
                           </span>
 
-                          <span className="text-12 font-mono text-sec bg-light-1 px-10 py-2 rounded-100 border-1 border-light-1">
+                          <span className="ticket-id-pill">
                             #{t.id}
                           </span>
                         </div>
 
-                        <h4 className="text-19 font-serif fw-700 text-dark-1">{t.subject}</h4>
+                        <h4 className="text-19 font-serif fw-700 text-dark-1 mt-4">{t.subject}</h4>
                       </div>
 
                       <div className="text-right md:text-left">
@@ -241,16 +242,18 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
                     </div>
 
                     <div className="p-14 rounded-12 bg-light-1 text-14 text-dark-1 mb-12 border-1 border-light-1">
-                      <div className="text-11 uppercase text-accent-1 font-bold tracking-wider mb-2">
-                        {getCategoryLabel(t.category)}
+                      <div className="text-11 uppercase text-accent-1 font-bold tracking-wider mb-4 d-flex items-center gap-6">
+                        <FileText size={13} />
+                        <span>{getCategoryLabel(t.category)}</span>
                       </div>
                       {t.description}
                     </div>
 
                     {t.resolutionNote && (
                       <div className="p-14 rounded-12 bg-emerald-50 text-emerald-900 border-1 border-emerald-200 text-13">
-                        <strong className="d-block text-11 uppercase text-emerald-700 font-bold tracking-wider mb-2">
-                          ✓ Resort Manager Resolution Note:
+                        <strong className="d-block text-11 uppercase text-emerald-700 font-bold tracking-wider mb-4 d-flex items-center gap-6">
+                          <CheckCircle2 size={14} className="text-emerald-600" />
+                          <span>Resort Manager Resolution Note:</span>
                         </strong>
                         {t.resolutionNote}
                       </div>
@@ -260,7 +263,7 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
               </div>
             ) : (
               <div className="p-40 text-center bg-light-1 rounded-20 border-1 border-light-1">
-                <i className="icon-chat text-32 text-accent-1 mb-12 d-block"></i>
+                <LifeBuoy size={36} className="text-accent-gold mb-12 d-inline-block" />
                 <h4 className="text-20 font-serif fw-700 text-dark-1 mb-6">No Support Tickets Found</h4>
                 <p className="text-14 text-sec">No complaint tickets match the selected status filter.</p>
               </div>
@@ -271,7 +274,7 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
         {/* RIGHT COLUMN: LODGE NEW COMPLAINT FORM CARD (5 COLS) */}
         <div className="col-lg-5">
           <div className="profile-card">
-            <div className="text-12 uppercase text-accent-1 font-semibold tracking-wider mb-2">GUEST ASSISTANCE</div>
+            <div className="text-11 uppercase text-accent-1 font-bold tracking-wider mb-2">GUEST ASSISTANCE</div>
             <h3 className="text-24 font-serif fw-700 text-dark-1 mb-20">Lodge Support Ticket</h3>
 
             {formMessage && (
@@ -287,9 +290,9 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
             )}
 
             <form onSubmit={handleRegisterComplaint}>
-              <div className="space-y-16">
+              <div>
                 {/* BOOKING SELECTOR */}
-                <div>
+                <div className="ticket-form-group">
                   <label className="text-12 font-bold text-dark-1 mb-6 d-block uppercase tracking-wider">
                     Associated Villa Stay *
                   </label>
@@ -309,7 +312,7 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
                 </div>
 
                 {/* CATEGORY SELECTOR */}
-                <div>
+                <div className="ticket-form-group">
                   <label className="text-12 font-bold text-dark-1 mb-6 d-block uppercase tracking-wider">
                     Category *
                   </label>
@@ -329,7 +332,7 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
                 </div>
 
                 {/* PRIORITY URGENCY */}
-                <div>
+                <div className="ticket-form-group">
                   <label className="text-12 font-bold text-dark-1 mb-6 d-block uppercase tracking-wider">
                     Priority Urgency *
                   </label>
@@ -346,7 +349,7 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
                 </div>
 
                 {/* SUBJECT */}
-                <div>
+                <div className="ticket-form-group">
                   <label className="text-12 font-bold text-dark-1 mb-6 d-block uppercase tracking-wider">
                     Subject Summary *
                   </label>
@@ -361,7 +364,7 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
                 </div>
 
                 {/* DESCRIPTION */}
-                <div>
+                <div className="ticket-form-group">
                   <label className="text-12 font-bold text-dark-1 mb-6 d-block uppercase tracking-wider">
                     Detailed Description *
                   </label>
@@ -379,22 +382,24 @@ export const GuestComplaintsPortal: React.FC<GuestComplaintsPortalProps> = ({ bo
                 {/* SUBMIT BUTTON */}
                 <button
                   type="submit"
-                  className="button bg-accent-1 text-white rounded-200 w-1/1 justify-center py-14 text-14 fw-700 shadow-xs hover-accent-dark transition-all mt-10"
+                  className="btn-ticket-submit"
                 >
-                  <i className="icon-check mr-8 text-16"></i> SUBMIT SUPPORT TICKET
+                  <Send size={16} />
+                  <span>SUBMIT SUPPORT TICKET</span>
                 </button>
               </div>
             </form>
 
             {/* DIRECT EMERGENCY ESCALATION BUTTON */}
-            <div className="pt-20 mt-20 border-top-light">
+            <div className="pt-20 mt-16 border-top-light">
               <a
                 href={`https://wa.me/${siteConfig.phoneNumbers[0].replace(/[^0-9]/g, '')}?text=URGENT%20ASSISTANCE%20REQUIRED%20FOR%20VILLA%20RESERVATION`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-concierge-whatsapp"
               >
-                <i className="icon-chat text-18"></i> Urgent WhatsApp Emergency Hotline
+                <AlertTriangle size={18} />
+                <span>Urgent WhatsApp Emergency Hotline</span>
               </a>
             </div>
           </div>

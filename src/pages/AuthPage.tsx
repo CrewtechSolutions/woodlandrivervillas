@@ -3,6 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { PageHero } from '../components/common/PageHero';
 import { useAuth } from '../context/AuthContext';
+import { 
+  Mail, 
+  Lock, 
+  User, 
+  Phone, 
+  ShieldCheck, 
+  Calendar, 
+  MessageSquare, 
+  ArrowRight, 
+  Eye, 
+  EyeOff, 
+  Sparkles,
+  AlertCircle 
+} from 'lucide-react';
 import '../styles/account.css';
 
 export const AuthPage: React.FC = () => {
@@ -112,86 +126,88 @@ export const AuthPage: React.FC = () => {
 
       <section className="layout-pt-md layout-pb-lg bg-light-1 account-wrapper">
         <div className="container relative z-10">
-          <div className="row y-gap-40 justify-center items-stretch">
-            {/* LEFT COLUMN: LUXURY RESORT PRIVILEGES SHOWCASE (6 COLS) */}
+          <div className="row y-gap-30 justify-center items-stretch">
+            {/* LEFT COLUMN: LUXURY RESORT PRIVILEGES SHOWCASE */}
             <div className="col-lg-5 col-md-10">
               <div className="auth-banner-card">
                 <div>
-                  <div className="d-inline-flex items-center x-gap-8 bg-white/10 px-16 py-6 rounded-200 border-1 border-white/20 mb-24">
-                    <span className="account-badge-vip">WOODLAND VIP CLUB</span>
+                  <div className="auth-vip-badge">
+                    <Sparkles size={14} className="text-amber-300" />
+                    <span className="auth-vip-badge-text">WOODLAND VIP CLUB</span>
                   </div>
 
-                  <h2 className="text-36 font-serif fw-700 text-white mb-16 leading-tight">
-                    Exclusive Resort Privileges
+                  <h2 className="auth-banner-title">
+                    Exclusive Resort <span className="text-gold-gradient">Privileges</span>
                   </h2>
-                  <p className="text-15 text-white/80 mb-32 leading-relaxed">
+                  <p className="auth-banner-subtitle">
                     Sign in to your member portal to manage current villa bookings, request priority check-in, download PDF invoices, and access 1-on-1 concierge assistance.
                   </p>
 
-                  <div className="space-y-16">
+                  <div className="auth-benefits-list">
                     <div className="auth-benefit-item">
-                      <div className="size-40 rounded-12 bg-accent-1 text-dark-1 flex-center flex-shrink-0 fw-700">
-                        <i className="icon-calendar text-18"></i>
+                      <div className="auth-benefit-icon">
+                        <Calendar size={20} />
                       </div>
                       <div>
-                        <div className="text-16 font-bold text-white mb-2">Instant Reservation Tracking</div>
-                        <div className="text-13 text-white/70">View stay timings, extra guest counts, and status updates in real time.</div>
+                        <div className="auth-benefit-title">Instant Reservation Tracking</div>
+                        <div className="auth-benefit-desc">View stay timings, extra guest counts, and status updates in real time.</div>
                       </div>
                     </div>
 
                     <div className="auth-benefit-item">
-                      <div className="size-40 rounded-12 bg-accent-1 text-dark-1 flex-center flex-shrink-0 fw-700">
-                        <i className="icon-chat text-18"></i>
+                      <div className="auth-benefit-icon">
+                        <MessageSquare size={20} />
                       </div>
                       <div>
-                        <div className="text-16 font-bold text-white mb-2">Direct Resort Concierge</div>
-                        <div className="text-13 text-white/70">File support tickets or contact your personal WhatsApp manager 24/7.</div>
+                        <div className="auth-benefit-title">Direct Resort Concierge</div>
+                        <div className="auth-benefit-desc">File support tickets or contact your personal WhatsApp manager 24/7.</div>
                       </div>
                     </div>
 
                     <div className="auth-benefit-item">
-                      <div className="size-40 rounded-12 bg-accent-1 text-dark-1 flex-center flex-shrink-0 fw-700">
-                        <i className="icon-shield text-18"></i>
+                      <div className="auth-benefit-icon">
+                        <ShieldCheck size={20} />
                       </div>
                       <div>
-                        <div className="text-16 font-bold text-white mb-2">Guaranteed Direct Rates</div>
-                        <div className="text-13 text-white/70">Exclusive member rate protection for future luxury stays in Alibaug.</div>
+                        <div className="auth-benefit-title">Guaranteed Direct Rates</div>
+                        <div className="auth-benefit-desc">Exclusive member rate protection for future luxury stays in Alibaug.</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-30 mt-30 border-top-light border-white/10 text-13 text-white/60">
-                  © Woodland River Villa • Luxury Private Resort Alibaug
+                <div className="auth-banner-footer">
+                  <span>© Woodland River Villa</span>
+                  <span className="auth-banner-footer-dot"></span>
+                  <span>Luxury Private Resort Alibaug</span>
                 </div>
               </div>
             </div>
 
-            {/* RIGHT COLUMN: INTERACTIVE GUEST AUTH FORM (7 COLS) */}
+            {/* RIGHT COLUMN: INTERACTIVE GUEST AUTH FORM */}
             <div className="col-lg-6 col-md-10">
-              <div className="auth-card-luxury">
-                {/* STEP 1: EMAIL VERIFICATION ENTRY */}
+              <div className="auth-card-luxury">                {/* STEP 1: EMAIL VERIFICATION ENTRY */}
                 {step === 'email' && (
                   <form onSubmit={handleCheckEmail}>
-                    <div className="mb-32">
-                      <div className="text-12 uppercase text-accent-1 font-bold tracking-wider mb-4">MEMBER AUTHENTICATION</div>
-                      <h2 className="text-32 font-serif fw-700 text-dark-1 mb-8">Sign In or Register</h2>
-                      <p className="text-15 text-sec">Enter your email address to access your guest portal.</p>
+                    <div className="auth-header-block">
+                      <div className="text-11 uppercase text-accent-1 font-bold tracking-wider mb-6">MEMBER AUTHENTICATION</div>
+                      <h2 className="text-28 md:text-32 font-serif fw-700 text-dark-1 mb-8">Sign In or Register</h2>
+                      <p className="text-14 text-sec">Enter your email address to access your guest portal.</p>
                     </div>
 
                     {error && (
                       <div className="p-16 mb-24 bg-red-50 text-red-800 rounded-16 text-14 font-medium border-1 border-red-200 d-flex items-center">
-                        <i className="icon-close text-16 mr-10 text-red-600"></i>
-                        {error}
+                        <AlertCircle size={18} className="mr-10 text-red-600 flex-shrink-0" />
+                        <span>{error}</span>
                       </div>
                     )}
 
-                    <div className="mb-28">
-                      <label className="text-13 font-bold text-dark-1 mb-8 d-block uppercase tracking-wider">Email Address *</label>
-                      <div className="relative">
+                    <div className="auth-input-group -last">
+                      <label className="auth-input-label">Email Address *</label>
+                      <div className="auth-input-wrapper">
                         <input
                           type="email"
-                          className="form-control-luxury"
+                          className="form-control-luxury-icon"
                           placeholder="e.g. guest@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
@@ -199,22 +215,23 @@ export const AuthPage: React.FC = () => {
                           disabled={submitting}
                           autoFocus
                         />
+                        <Mail size={18} className="auth-input-icon" />
                       </div>
                     </div>
 
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="button bg-accent-1 text-white rounded-200 w-1/1 py-16 text-15 fw-700 shadow-sm hover-accent-dark transition-all d-flex justify-center items-center"
+                      className="btn-auth-primary"
                     >
                       {submitting ? (
                         <>
-                          <span className="spinner-border spinner-border-sm mr-10" role="status" aria-hidden="true"></span>
+                          <span className="spinner-border spinner-border-sm mr-8" role="status" aria-hidden="true"></span>
                           Verifying Email...
                         </>
                       ) : (
                         <>
-                          CONTINUE <i className="icon-arrow-right text-14 ml-8"></i>
+                          CONTINUE <ArrowRight size={16} />
                         </>
                       )}
                     </button>
@@ -224,10 +241,10 @@ export const AuthPage: React.FC = () => {
                 {/* STEP 2A: LOGIN FORM */}
                 {step === 'login' && (
                   <form onSubmit={handleLoginSubmit}>
-                    <div className="d-flex justify-between items-center mb-25 pb-15 border-bottom-light">
+                    <div className="d-flex justify-between items-center mb-28 pb-18 border-bottom-light">
                       <div>
-                        <div className="text-12 uppercase text-accent-1 font-bold tracking-wider mb-2">WELCOME BACK</div>
-                        <h2 className="text-28 font-serif fw-700 text-dark-1">Sign In to Account</h2>
+                        <div className="text-11 uppercase text-accent-1 font-bold tracking-wider mb-2">WELCOME BACK</div>
+                        <h2 className="text-24 md:text-28 font-serif fw-700 text-dark-1">Sign In to Account</h2>
                       </div>
                       <button
                         type="button"
@@ -238,29 +255,29 @@ export const AuthPage: React.FC = () => {
                       </button>
                     </div>
 
-                    <div className="p-14 bg-light-1 rounded-14 text-14 text-dark-1 mb-24 d-flex justify-between items-center border-1 border-light-1">
-                      <div className="d-flex items-center">
-                        <i className="icon-mail text-16 text-accent-1 mr-10"></i>
-                        <span className="font-semibold">{email}</span>
+                    <div className="auth-email-badge">
+                      <div className="auth-email-badge-text">
+                        <Mail size={16} className="text-accent-1 flex-shrink-0" />
+                        <span>{email}</span>
                       </div>
-                      <span className="text-11 font-bold text-emerald-800 bg-emerald-50 px-10 py-3 rounded-100 border-1 border-emerald-200">
+                      <span className="auth-status-pill registered">
                         Registered
                       </span>
                     </div>
 
                     {error && (
                       <div className="p-16 mb-24 bg-red-50 text-red-800 rounded-16 text-14 font-medium border-1 border-red-200 d-flex items-center">
-                        <i className="icon-close text-16 mr-10 text-red-600"></i>
-                        {error}
+                        <AlertCircle size={18} className="mr-10 text-red-600 flex-shrink-0" />
+                        <span>{error}</span>
                       </div>
                     )}
 
-                    <div className="mb-28">
-                      <label className="text-13 font-bold text-dark-1 mb-8 d-block uppercase tracking-wider">Account Password *</label>
-                      <div className="relative">
+                    <div className="auth-input-group -last">
+                      <label className="auth-input-label">Account Password *</label>
+                      <div className="auth-input-wrapper">
                         <input
                           type={showPassword ? 'text' : 'password'}
-                          className="form-control-luxury pr-50"
+                          className="form-control-luxury-icon has-toggle"
                           placeholder="••••••••"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
@@ -268,12 +285,14 @@ export const AuthPage: React.FC = () => {
                           disabled={submitting}
                           autoFocus
                         />
+                        <Lock size={18} className="auth-input-icon" />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-16 top-1/2 -translate-y-1/2 text-14 text-sec hover-accent"
+                          className="auth-password-toggle"
                         >
-                          {showPassword ? 'HIDE' : 'SHOW'}
+                          {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                          <span>{showPassword ? 'HIDE' : 'SHOW'}</span>
                         </button>
                       </div>
                     </div>
@@ -281,11 +300,11 @@ export const AuthPage: React.FC = () => {
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="button bg-accent-1 text-white rounded-200 w-1/1 py-16 text-15 fw-700 shadow-sm hover-accent-dark transition-all d-flex justify-center items-center mb-20"
+                      className="btn-auth-primary"
                     >
                       {submitting ? (
                         <>
-                          <span className="spinner-border spinner-border-sm mr-10" role="status" aria-hidden="true"></span>
+                          <span className="spinner-border spinner-border-sm mr-8" role="status" aria-hidden="true"></span>
                           Signing In...
                         </>
                       ) : (
@@ -293,7 +312,7 @@ export const AuthPage: React.FC = () => {
                       )}
                     </button>
 
-                    <div className="text-center pt-10 border-top-light">
+                    <div className="auth-form-footer-link">
                       <button
                         type="button"
                         onClick={() => { setStep('register'); setError(null); }}
@@ -308,10 +327,10 @@ export const AuthPage: React.FC = () => {
                 {/* STEP 2B: REGISTRATION FORM */}
                 {step === 'register' && (
                   <form onSubmit={handleRegisterSubmit}>
-                    <div className="d-flex justify-between items-center mb-25 pb-15 border-bottom-light">
+                    <div className="d-flex justify-between items-center mb-28 pb-18 border-bottom-light">
                       <div>
-                        <div className="text-12 uppercase text-accent-1 font-bold tracking-wider mb-2">NEW GUEST REGISTRATION</div>
-                        <h2 className="text-28 font-serif fw-700 text-dark-1">Create Account</h2>
+                        <div className="text-11 uppercase text-accent-1 font-bold tracking-wider mb-2">NEW GUEST REGISTRATION</div>
+                        <h2 className="text-24 md:text-28 font-serif fw-700 text-dark-1">Create Account</h2>
                       </div>
                       <button
                         type="button"
@@ -322,29 +341,29 @@ export const AuthPage: React.FC = () => {
                       </button>
                     </div>
 
-                    <div className="p-14 bg-light-1 rounded-14 text-14 text-dark-1 mb-24 d-flex justify-between items-center border-1 border-light-1">
-                      <div className="d-flex items-center">
-                        <i className="icon-mail text-16 text-accent-1 mr-10"></i>
-                        <span className="font-semibold">{email}</span>
+                    <div className="auth-email-badge">
+                      <div className="auth-email-badge-text">
+                        <Mail size={16} className="text-accent-1 flex-shrink-0" />
+                        <span>{email}</span>
                       </div>
-                      <span className="text-11 font-bold text-accent-1 bg-amber-50 px-10 py-3 rounded-100 border-1 border-amber-200">
+                      <span className="auth-status-pill new-guest">
                         New Guest
                       </span>
                     </div>
 
                     {error && (
                       <div className="p-16 mb-24 bg-red-50 text-red-800 rounded-16 text-14 font-medium border-1 border-red-200 d-flex items-center">
-                        <i className="icon-close text-16 mr-10 text-red-600"></i>
-                        {error}
+                        <AlertCircle size={18} className="mr-10 text-red-600 flex-shrink-0" />
+                        <span>{error}</span>
                       </div>
                     )}
 
-                    <div className="space-y-20 mb-28">
-                      <div>
-                        <label className="text-13 font-bold text-dark-1 mb-8 d-block uppercase tracking-wider">Full Name *</label>
+                    <div className="auth-input-group">
+                      <label className="auth-input-label">Full Name *</label>
+                      <div className="auth-input-wrapper">
                         <input
                           type="text"
-                          className="form-control-luxury"
+                          className="form-control-luxury-icon"
                           placeholder="e.g. Rahul Sharma"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
@@ -352,51 +371,57 @@ export const AuthPage: React.FC = () => {
                           disabled={submitting}
                           autoFocus
                         />
+                        <User size={18} className="auth-input-icon" />
                       </div>
+                    </div>
 
-                      <div>
-                        <label className="text-13 font-bold text-dark-1 mb-8 d-block uppercase tracking-wider">Phone Number (Optional)</label>
+                    <div className="auth-input-group">
+                      <label className="auth-input-label">Phone Number (Optional)</label>
+                      <div className="auth-input-wrapper">
                         <input
                           type="tel"
-                          className="form-control-luxury"
+                          className="form-control-luxury-icon"
                           placeholder="+91 98765 43210"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           disabled={submitting}
                         />
+                        <Phone size={18} className="auth-input-icon" />
                       </div>
+                    </div>
 
-                      <div>
-                        <label className="text-13 font-bold text-dark-1 mb-8 d-block uppercase tracking-wider">Create Account Password *</label>
-                        <div className="relative">
-                          <input
-                            type={showPassword ? 'text' : 'password'}
-                            className="form-control-luxury pr-50"
-                            placeholder="At least 6 characters"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            disabled={submitting}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-16 top-1/2 -translate-y-1/2 text-14 text-sec hover-accent"
-                          >
-                            {showPassword ? 'HIDE' : 'SHOW'}
-                          </button>
-                        </div>
+                    <div className="auth-input-group -last">
+                      <label className="auth-input-label">Create Account Password *</label>
+                      <div className="auth-input-wrapper">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          className="form-control-luxury-icon has-toggle"
+                          placeholder="At least 6 characters"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          disabled={submitting}
+                        />
+                        <Lock size={18} className="auth-input-icon" />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="auth-password-toggle"
+                        >
+                          {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                          <span>{showPassword ? 'HIDE' : 'SHOW'}</span>
+                        </button>
                       </div>
                     </div>
 
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="button bg-accent-1 text-white rounded-200 w-1/1 py-16 text-15 fw-700 shadow-sm hover-accent-dark transition-all d-flex justify-center items-center mb-20"
+                      className="btn-auth-primary"
                     >
                       {submitting ? (
                         <>
-                          <span className="spinner-border spinner-border-sm mr-10" role="status" aria-hidden="true"></span>
+                          <span className="spinner-border spinner-border-sm mr-8" role="status" aria-hidden="true"></span>
                           Creating Account...
                         </>
                       ) : (
@@ -404,7 +429,7 @@ export const AuthPage: React.FC = () => {
                       )}
                     </button>
 
-                    <div className="text-center pt-10 border-top-light">
+                    <div className="auth-form-footer-link">
                       <button
                         type="button"
                         onClick={() => { setStep('login'); setError(null); }}
@@ -423,3 +448,4 @@ export const AuthPage: React.FC = () => {
     </>
   );
 };
+

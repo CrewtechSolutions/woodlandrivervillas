@@ -10,6 +10,7 @@ import { Booking } from '../types';
 import { ReservationCard } from '../components/account/ReservationCard';
 import { ProfileOverview } from '../components/account/ProfileOverview';
 import { GuestComplaintsPortal } from '../components/account/GuestComplaintsPortal';
+import { User, Calendar, MessageSquare, ShieldCheck, Mail, Phone, MapPin, Sparkles, LogOut, Compass, Lock, Eye, EyeOff, KeyRound, CheckCircle2, AlertCircle } from 'lucide-react';
 import '../styles/account.css';
 
 export const AccountPage: React.FC = () => {
@@ -35,10 +36,13 @@ export const AccountPage: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loadingBookings, setLoadingBookings] = useState<boolean>(true);
 
-  // Password update form state
+  // Password update form state & toggles
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [securityMessage, setSecurityMessage] = useState<string | null>(null);
 
   // Fetch bookings dynamically from public/v1/my-bookings
@@ -68,25 +72,30 @@ export const AccountPage: React.FC = () => {
     };
   }, [isAuthenticated, token]);
 
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  const handlePasswordChange = (e: React.FormEvent) => {
+  const handlePasswordUpdate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentPassword || !newPassword) {
-      setSecurityMessage('Please fill in all password fields');
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setSecurityMessage('Please complete all password fields.');
       return;
     }
     if (newPassword !== confirmPassword) {
-      setSecurityMessage('New passwords do not match');
+      setSecurityMessage('New password and confirmation do not match.');
       return;
     }
-    setSecurityMessage('Your password has been updated successfully!');
+    if (newPassword.length < 6) {
+      setSecurityMessage('Password must be at least 6 characters long.');
+      return;
+    }
+
+    setSecurityMessage('Security settings updated successfully!');
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
   };
+
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/auth" replace />;
+  }
 
   const filteredBookings = bookings.filter((b) => {
     const status = b.status?.toLowerCase();
@@ -111,62 +120,73 @@ export const AccountPage: React.FC = () => {
       />
 
       {/* UNIFIED LUXURY TOP HERO BANNER */}
-      <section className="pageHero -type-1 -items-center relative overflow-hidden">
+      <section className="pageHero -type-1 account-hero-section relative overflow-hidden">
         <div className="pageHero__bg">
           <img src="/assets/img/pageHero/1.png" alt="Woodland River Villa" loading="eager" />
         </div>
         <div className="pageHero-account-overlay"></div>
 
-        <div className="container relative z-10 py-60 sm:py-40">
-          <div className="row justify-between items-center y-gap-30">
-            {/* LEFT: USER WELCOME TEXT & METADATA */}
-            <div className="col-lg-8">
-              <div className="d-flex flex-column y-gap-14">
-                {/* LINE 1: WELCOME TEXT */}
-                <h1 className="pageHero__title text-44 md:text-34 font-serif fw-600 text-white m-0 drop-shadow-md">
-                  Welcome, {user.name}
-                </h1>
+        <div className="container relative z-10">
+          <div className="account-hero-card-luxury">
+            <div className="row justify-between items-center y-gap-30 relative z-10">
+              {/* LEFT: USER WELCOME TEXT & METADATA */}
+              <div className="col-lg-8">
+                <div className="d-flex flex-column y-gap-14">
+                  {/* LINE 1: WELCOME SUB-HEADING & NAME */}
+                  <div>
+                    <span className="hero-welcome-label">WELCOME TO GUEST PORTAL</span>
+                    <h1 className="account-hero-title">
+                      {user.name}
+                    </h1>
+                  </div>
 
-                {/* LINE 2: VIP MEMBER BADGE */}
-                <div className="d-flex items-center x-gap-12 flex-wrap y-gap-6">
-                  <span className="account-badge-vip">
-                    WOODLAND VIP MEMBER
-                  </span>
-                </div>
-
-                {/* LINE 3: METADATA PILLS */}
-                <div className="d-flex items-center flex-wrap x-gap-10 y-gap-10 pt-4">
-                  <span className="hero-meta-pill">
-                    <i className="icon-mail text-14 text-accent-1 mr-8"></i>{user.email}
-                  </span>
-                  {user.phone && (
-                    <span className="hero-meta-pill">
-                      <i className="icon-phone text-14 text-accent-1 mr-8"></i>{user.phone}
+                  {/* LINE 2: VIP MEMBER BADGE */}
+                  <div className="d-flex items-center x-gap-12 flex-wrap y-gap-6">
+                    <span className="account-badge-vip">
+                      <Sparkles size={13} className="text-amber-300 mr-4" />
+                      WOODLAND VIP MEMBER
                     </span>
-                  )}
-                  <span className="hero-meta-pill">
-                    <i className="icon-map text-14 text-accent-1 mr-8"></i>Zirad, Alibaug
-                  </span>
+                  </div>
+
+                  {/* LINE 3: METADATA PILLS */}
+                  <div className="d-flex items-center flex-wrap x-gap-10 y-gap-10 pt-8">
+                    <span className="hero-meta-pill">
+                      <Mail size={14} className="text-accent-gold mr-6" />
+                      <span>{user.email}</span>
+                    </span>
+                    {user.phone && (
+                      <span className="hero-meta-pill">
+                        <Phone size={14} className="text-accent-gold mr-6" />
+                        <span>{user.phone}</span>
+                      </span>
+                    )}
+                    <span className="hero-meta-pill">
+                      <MapPin size={14} className="text-accent-gold mr-6" />
+                      <span>Zirad, Alibaug</span>
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* RIGHT: EQUAL-SIZED ACTION BUTTONS (BOOK NEW VILLA STAY & SIGN OUT) */}
-            <div className="col-lg-4 d-flex justify-end md:justify-start">
-              <div className="d-flex flex-column sm:flex-row items-center x-gap-16 y-gap-12 w-1/1 sm:w-auto">
-                <Link
-                  to="/catalogue"
-                  className="btn-hero-primary"
-                >
-                  <i className="icon-bed mr-8 text-16"></i> BOOK NEW VILLA STAY
-                </Link>
+              {/* RIGHT: EQUAL-SIZED ACTION BUTTONS (BOOK NEW VILLA STAY & SIGN OUT) */}
+              <div className="col-lg-4 d-flex justify-end md:justify-start">
+                <div className="d-flex flex-column sm:flex-row items-center x-gap-16 y-gap-12 w-1/1 sm:w-auto">
+                  <Link
+                    to="/catalogue"
+                    className="btn-hero-primary"
+                  >
+                    <Compass size={17} className="mr-6" />
+                    <span>BOOK NEW VILLA STAY</span>
+                  </Link>
 
-                <button
-                  onClick={logout}
-                  className="btn-hero-secondary"
-                >
-                  <i className="icon-logout mr-8 text-16"></i> SIGN OUT
-                </button>
+                  <button
+                    onClick={logout}
+                    className="btn-hero-secondary"
+                  >
+                    <LogOut size={17} className="mr-6" />
+                    <span>SIGN OUT</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -197,22 +217,22 @@ export const AccountPage: React.FC = () => {
           )}
 
           {/* ELEGANT CENTERED SUB-MENU NAVIGATION PILL BAR */}
-          <div className="d-flex justify-center items-center mb-50 px-15">
+          <div className="account-tabs-container mb-40 px-15">
             <div className="account-tabs-wrapper">
               <button
                 onClick={() => setActiveTab('profile')}
                 className={`account-tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
               >
-                <i className="icon-guest text-16"></i>
-                Profile Overview
+                <User size={17} className="tab-icon" />
+                <span>Profile Overview</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('bookings')}
                 className={`account-tab-btn ${activeTab === 'bookings' ? 'active' : ''}`}
               >
-                <i className="icon-calendar text-16"></i>
-                My Reservations
+                <Calendar size={17} className="tab-icon" />
+                <span>My Reservations</span>
                 <span className="account-tab-badge">
                   {bookings.length}
                 </span>
@@ -222,16 +242,16 @@ export const AccountPage: React.FC = () => {
                 onClick={() => setActiveTab('complaints')}
                 className={`account-tab-btn ${activeTab === 'complaints' ? 'active' : ''}`}
               >
-                <i className="icon-chat text-16"></i>
-                Support & Complaints
+                <MessageSquare size={17} className="tab-icon" />
+                <span>Support & Complaints</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('security')}
                 className={`account-tab-btn ${activeTab === 'security' ? 'active' : ''}`}
               >
-                <i className="icon-shield text-16"></i>
-                Security & Settings
+                <ShieldCheck size={17} className="tab-icon" />
+                <span>Security & Settings</span>
               </button>
             </div>
           </div>
@@ -319,56 +339,108 @@ export const AccountPage: React.FC = () => {
             <div className="row y-gap-40 justify-center">
               <div className="col-lg-7">
                 <div className="auth-card-luxury">
-                  <h3 className="text-28 font-serif fw-700 text-dark-1 mb-25 pb-15 border-bottom-light">Change Password</h3>
+                  <div className="d-flex justify-between items-center mb-28 pb-18 border-bottom-light">
+                    <div>
+                      <div className="text-11 uppercase text-accent-1 font-bold tracking-wider mb-2">SECURITY & CREDENTIALS</div>
+                      <h3 className="text-24 md:text-28 font-serif fw-700 text-dark-1">Change Account Password</h3>
+                    </div>
+                    <ShieldCheck size={28} className="text-accent-gold flex-shrink-0" />
+                  </div>
 
                   {securityMessage && (
-                    <div className="p-15 mb-25 bg-light-1 text-accent-1 rounded-12 text-14 border-1 border-light-1">
-                      {securityMessage}
+                    <div className={`p-16 mb-24 rounded-16 text-14 font-medium border-1 d-flex items-center ${
+                      securityMessage.includes('successfully')
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                        : 'bg-red-50 text-red-800 border-red-200'
+                    }`}>
+                      {securityMessage.includes('successfully') ? (
+                        <CheckCircle2 size={18} className="mr-10 text-emerald-600 flex-shrink-0" />
+                      ) : (
+                        <AlertCircle size={18} className="mr-10 text-red-600 flex-shrink-0" />
+                      )}
+                      <span>{securityMessage}</span>
                     </div>
                   )}
 
-                  <form onSubmit={handlePasswordChange}>
-                    <div className="mb-20">
-                      <label className="text-13 fw-700 uppercase tracking-wider text-dark-1 mb-8 d-block">Current Password *</label>
-                      <input
-                        type="password"
-                        className="form-control-luxury w-1/1"
-                        placeholder="••••••••"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        required
-                      />
+                  <form onSubmit={handlePasswordUpdate}>
+                    {/* CURRENT PASSWORD */}
+                    <div className="auth-input-group">
+                      <label className="auth-input-label">Current Password *</label>
+                      <div className="auth-input-wrapper">
+                        <input
+                          type={showCurrentPassword ? 'text' : 'password'}
+                          className="form-control-luxury-icon has-toggle"
+                          placeholder="••••••••"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          required
+                        />
+                        <Lock size={18} className="auth-input-icon" />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                          className="auth-password-toggle"
+                        >
+                          {showCurrentPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                          <span>{showCurrentPassword ? 'HIDE' : 'SHOW'}</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="mb-20">
-                      <label className="text-13 fw-700 uppercase tracking-wider text-dark-1 mb-8 d-block">New Password *</label>
-                      <input
-                        type="password"
-                        className="form-control-luxury w-1/1"
-                        placeholder="At least 6 characters"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
-                      />
+                    {/* NEW PASSWORD */}
+                    <div className="auth-input-group">
+                      <label className="auth-input-label">New Password *</label>
+                      <div className="auth-input-wrapper">
+                        <input
+                          type={showNewPassword ? 'text' : 'password'}
+                          className="form-control-luxury-icon has-toggle"
+                          placeholder="At least 6 characters"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          required
+                        />
+                        <KeyRound size={18} className="auth-input-icon" />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          className="auth-password-toggle"
+                        >
+                          {showNewPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                          <span>{showNewPassword ? 'HIDE' : 'SHOW'}</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="mb-30">
-                      <label className="text-13 fw-700 uppercase tracking-wider text-dark-1 mb-8 d-block">Confirm New Password *</label>
-                      <input
-                        type="password"
-                        className="form-control-luxury w-1/1"
-                        placeholder="••••••••"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                      />
+                    {/* CONFIRM NEW PASSWORD */}
+                    <div className="auth-input-group -last">
+                      <label className="auth-input-label">Confirm New Password *</label>
+                      <div className="auth-input-wrapper">
+                        <input
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          className="form-control-luxury-icon has-toggle"
+                          placeholder="••••••••"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          required
+                        />
+                        <Lock size={18} className="auth-input-icon" />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="auth-password-toggle"
+                        >
+                          {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                          <span>{showConfirmPassword ? 'HIDE' : 'SHOW'}</span>
+                        </button>
+                      </div>
                     </div>
 
+                    {/* SUBMIT BUTTON */}
                     <button
                       type="submit"
-                      className="button bg-accent-1 text-white rounded-200 px-35 py-16 text-15 fw-600 shadow-xs hover-accent-dark transition-all"
+                      className="btn-auth-primary"
                     >
-                      UPDATE PASSWORD
+                      UPDATE ACCOUNT PASSWORD
                     </button>
                   </form>
                 </div>
